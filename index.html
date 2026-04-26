@@ -836,9 +836,61 @@
     opacity: 0.35;
     cursor: default;
   }
+
+  .language-options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .language-btn {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1.5px solid #E8E0DC;
+    background: white;
+    color: var(--ink);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    text-align: left;
+    transition: all 0.15s;
+  }
+
+  .language-btn:hover {
+    border-color: var(--rose);
+    transform: translateY(-1px);
+  }
+
+  .language-btn strong {
+    color: var(--rose);
+    display: block;
+    margin-bottom: 2px;
+  }
 </style>
 </head>
 <body>
+
+<div class="onboarding" id="languageGate">
+  <div class="onboarding-card">
+    <div class="onboarding-logo">🌙</div>
+    <div class="onboarding-title">Luna<span>Sync</span></div>
+    <div class="onboarding-copy">Elige tu idioma para empezar.</div>
+    <div class="language-options">
+      <button class="language-btn" onclick="setLanguage('es')">
+        <strong>Español</strong>
+        Ciclo, bienestar y Luna AI en español.
+      </button>
+      <button class="language-btn" onclick="setLanguage('ca')">
+        <strong>Català</strong>
+        Cicle, benestar i Luna AI en català.
+      </button>
+      <button class="language-btn" onclick="setLanguage('en')">
+        <strong>English</strong>
+        Cycle, wellbeing and Luna AI in English.
+      </button>
+    </div>
+  </div>
+</div>
 
 <div class="onboarding" id="onboarding">
   <div class="onboarding-card">
@@ -854,21 +906,21 @@
 
     <div class="onboarding-step active" data-step="0">
       <div class="profile-field">
-        <div class="profile-label">¿Cómo te llamas?</div>
+        <div class="profile-label" id="onboardingNameLabel">¿Cómo te llamas?</div>
         <input class="profile-input" id="onboardingName" type="text" placeholder="Tu nombre" autocomplete="given-name">
       </div>
     </div>
 
     <div class="onboarding-step" data-step="1">
       <div class="profile-field">
-        <div class="profile-label">Duración media de tu ciclo</div>
+        <div class="profile-label" id="onboardingCycleLabel">Duración media de tu ciclo</div>
         <input class="profile-input" id="onboardingCycleLen" type="number" min="21" max="45" value="28">
       </div>
     </div>
 
     <div class="onboarding-step" data-step="2">
       <div class="profile-field">
-        <div class="profile-label">Primer día de tu último periodo</div>
+        <div class="profile-label" id="onboardingPeriodLabel">Primer día de tu último periodo</div>
         <input class="profile-input" id="onboardingLastPeriod" type="date">
       </div>
     </div>
@@ -1071,36 +1123,45 @@
   <!-- SCREEN: PERFIL -->
   <div class="screen" id="screen-perfil">
     <div class="card">
-      <div class="card-title">👤 Tu perfil</div>
+      <div class="card-title" id="profileTitle">👤 Tu perfil</div>
+
+      <div class="profile-field">
+        <div class="profile-label" id="profileLanguageLabel">Idioma</div>
+        <select class="profile-input" id="profileLanguage">
+          <option value="es">Español</option>
+          <option value="ca">Català</option>
+          <option value="en">English</option>
+        </select>
+      </div>
       
       <div class="profile-field">
-        <div class="profile-label">Nombre</div>
+        <div class="profile-label" id="profileNameLabel">Nombre</div>
         <input class="profile-input" id="profileName" type="text" placeholder="Tu nombre">
-        <div class="field-hint">Se usa para personalizar Luna AI y tus resúmenes.</div>
+        <div class="field-hint" id="profileNameHint">Se usa para personalizar Luna AI y tus resúmenes.</div>
       </div>
 
       <div class="profile-field">
-        <div class="profile-label">Duración media del ciclo (días)</div>
+        <div class="profile-label" id="profileCycleLabel">Duración media del ciclo (días)</div>
         <input class="profile-input" id="profileCycleLen" type="number" min="21" max="45" value="28">
       </div>
 
       <div class="profile-field">
-        <div class="profile-label">Duración media del periodo (días)</div>
+        <div class="profile-label" id="profilePeriodLabel">Duración media del periodo (días)</div>
         <input class="profile-input" id="profilePeriodLen" type="number" min="2" max="10" value="5">
       </div>
 
       <div class="profile-field">
-        <div class="profile-label">Fecha de nacimiento</div>
+        <div class="profile-label" id="profileDobLabel">Fecha de nacimiento</div>
         <input class="profile-input" id="profileDob" type="date">
       </div>
 
       <div class="profile-field">
-        <div class="profile-label">Objetivo</div>
+        <div class="profile-label" id="profileGoalLabel">Objetivo</div>
         <select class="profile-input" id="profileGoal">
-          <option value="salud">Salud general</option>
-          <option value="embarazo">Buscar embarazo</option>
-          <option value="anticoncepcion">Anticoncepción natural</option>
-          <option value="spm">Gestionar SPM</option>
+          <option value="salud" id="goalHealth">Salud general</option>
+          <option value="embarazo" id="goalPregnancy">Buscar embarazo</option>
+          <option value="anticoncepcion" id="goalContraception">Anticoncepción natural</option>
+          <option value="spm" id="goalPms">Gestionar SPM</option>
         </select>
       </div>
 
@@ -1115,32 +1176,32 @@
         </label>
       </div>
 
-      <button class="save-btn" onclick="saveProfile()">Guardar perfil</button>
+      <button class="save-btn" id="profileSaveBtn" onclick="saveProfile()">Guardar perfil</button>
     </div>
 
     <div class="card">
-      <div class="card-title">🔒 Privacidad</div>
-      <div style="font-size:14px;color:#888;line-height:1.6">
+      <div class="card-title" id="privacyTitle">🔒 Privacidad</div>
+      <div id="privacyCopy" style="font-size:14px;color:#888;line-height:1.6">
         Todos tus datos se guardan <strong>únicamente en este dispositivo</strong>. 
         No compartimos ni vendemos tu información. 
         LunaSync funciona 100% offline.
       </div>
-      <button class="save-btn" onclick="exportData()" style="margin-top:16px">Exportar mis datos</button>
-      <button class="danger-btn" onclick="resetData()">Borrar todos mis datos</button>
+      <button class="save-btn" id="exportDataBtn" onclick="exportData()" style="margin-top:16px">Exportar mis datos</button>
+      <button class="danger-btn" id="resetDataBtn" onclick="resetData()">Borrar todos mis datos</button>
     </div>
 
     <div class="card">
-      <div class="card-title">📱 Instalar LunaSync</div>
-      <div style="font-size:14px;color:#888;line-height:1.6">
+      <div class="card-title" id="installTitle">📱 Instalar LunaSync</div>
+      <div id="installCopy" style="font-size:14px;color:#888;line-height:1.6">
         En iPhone: comparte esta página y toca <strong>Añadir a pantalla de inicio</strong>. 
         En Android: abre el menú del navegador y toca <strong>Instalar app</strong>.
       </div>
-      <div class="field-hint">La app seguirá guardando los datos en este dispositivo.</div>
+      <div class="field-hint" id="installHint">La app seguirá guardando los datos en este dispositivo.</div>
     </div>
 
     <div class="card" style="margin-bottom:30px">
-      <div class="card-title">⚠️ Aviso médico</div>
-      <div style="font-size:13px;color:#aaa;line-height:1.6">
+      <div class="card-title" id="medicalTitle">⚠️ Aviso médico</div>
+      <div id="medicalCopy" style="font-size:13px;color:#aaa;line-height:1.6">
         LunaSync es una herramienta de seguimiento personal y no sustituye el consejo médico profesional. 
         Consulta siempre con tu ginecóloga o médica para cualquier preocupación de salud.
       </div>
@@ -1152,19 +1213,19 @@
 <nav class="nav">
   <button class="nav-btn active" onclick="showScreen('hoy', this)">
     <div class="nav-icon">🌸</div>
-    Hoy
+    <span id="navHoy">Hoy</span>
   </button>
   <button class="nav-btn" onclick="showScreen('ciclo', this)">
     <div class="nav-icon">📅</div>
-    Ciclo
+    <span id="navCiclo">Ciclo</span>
   </button>
   <button class="nav-btn" onclick="showScreen('luna', this)">
     <div class="nav-icon">🌙</div>
-    Luna AI
+    <span id="navLuna">Luna AI</span>
   </button>
   <button class="nav-btn" onclick="showScreen('perfil', this)">
     <div class="nav-icon">👤</div>
-    Perfil
+    <span id="navPerfil">Perfil</span>
   </button>
 </nav>
 
@@ -1180,12 +1241,49 @@ if (!state.periodLength) state.periodLength = 5;
 if (!state.periodDays) state.periodDays = []; // array of "YYYY-MM-DD"
 if (!state.logs) state.logs = {}; // date -> {mood, symptoms, flow}
 if (!state.name) state.name = '';
+if (!('language' in state)) state.language = '';
 
 let calViewDate = new Date();
 let chatHistory = [];
 const TODAY = new Date();
 const TODAY_STR = formatDate(TODAY);
 let onboardingStep = 0;
+
+const I18N = {
+  es: {
+    navHoy: 'Hoy', navCiclo: 'Ciclo', navLuna: 'Luna AI', navPerfil: 'Perfil',
+    onboardingCopy: ['Vamos a configurar tu ciclo en menos de un minuto.', 'Si no lo sabes exacto, 28 días es una buena base para empezar.', 'Con esta fecha LunaSync calculará tu fase actual y próximas predicciones.'],
+    onboardingNameLabel: '¿Cómo te llamas?', onboardingNamePlaceholder: 'Tu nombre', onboardingCycleLabel: 'Duración media de tu ciclo', onboardingPeriodLabel: 'Primer día de tu último periodo', onboardingNext: 'Continuar', onboardingStart: 'Empezar',
+    profileTitle: '👤 Tu perfil', profileLanguageLabel: 'Idioma', profileNameLabel: 'Nombre', profileNamePlaceholder: 'Tu nombre', profileNameHint: 'Se usa para personalizar Luna AI y tus resúmenes.', profileCycleLabel: 'Duración media del ciclo (días)', profilePeriodLabel: 'Duración media del periodo (días)', profileDobLabel: 'Fecha de nacimiento', profileGoalLabel: 'Objetivo',
+    goalHealth: 'Salud general', goalPregnancy: 'Buscar embarazo', goalContraception: 'Anticoncepción natural', goalPms: 'Gestionar SPM',
+    profileSaveBtn: 'Guardar perfil', privacyTitle: '🔒 Privacidad', privacyCopy: 'Todos tus datos se guardan <strong>únicamente en este dispositivo</strong>. No compartimos ni vendemos tu información. LunaSync funciona 100% offline.', exportDataBtn: 'Exportar mis datos', resetDataBtn: 'Borrar todos mis datos',
+    installTitle: '📱 Instalar LunaSync', installCopy: 'En iPhone: comparte esta página y toca <strong>Añadir a pantalla de inicio</strong>. En Android: abre el menú del navegador y toca <strong>Instalar app</strong>.', installHint: 'La app seguirá guardando los datos en este dispositivo.',
+    medicalTitle: '⚠️ Aviso médico', medicalCopy: 'LunaSync es una herramienta de seguimiento personal y no sustituye el consejo médico profesional. Consulta siempre con tu ginecóloga o médica para cualquier preocupación de salud.',
+    toastName: 'Escribe tu nombre para continuar', toastCycle: 'El ciclo debe estar entre 21 y 45 días', toastPeriod: 'El periodo debe estar entre 2 y 10 días', toastLastPeriod: 'Selecciona el inicio de tu último periodo', toastWelcome: 'Bienvenida a LunaSync', toastSaved: '✅ Perfil guardado'
+  },
+  ca: {
+    navHoy: 'Avui', navCiclo: 'Cicle', navLuna: 'Luna AI', navPerfil: 'Perfil',
+    onboardingCopy: ['Configurarem el teu cicle en menys d’un minut.', 'Si no ho saps exacte, 28 dies és una bona base per començar.', 'Amb aquesta data LunaSync calcularà la fase actual i les properes prediccions.'],
+    onboardingNameLabel: 'Com et dius?', onboardingNamePlaceholder: 'El teu nom', onboardingCycleLabel: 'Durada mitjana del teu cicle', onboardingPeriodLabel: 'Primer dia de la teva última regla', onboardingNext: 'Continuar', onboardingStart: 'Començar',
+    profileTitle: '👤 El teu perfil', profileLanguageLabel: 'Idioma', profileNameLabel: 'Nom', profileNamePlaceholder: 'El teu nom', profileNameHint: 'S’utilitza per personalitzar Luna AI i els teus resums.', profileCycleLabel: 'Durada mitjana del cicle (dies)', profilePeriodLabel: 'Durada mitjana de la regla (dies)', profileDobLabel: 'Data de naixement', profileGoalLabel: 'Objectiu',
+    goalHealth: 'Salut general', goalPregnancy: 'Buscar embaràs', goalContraception: 'Anticoncepció natural', goalPms: 'Gestionar SPM',
+    profileSaveBtn: 'Desar perfil', privacyTitle: '🔒 Privacitat', privacyCopy: 'Totes les dades es guarden <strong>només en aquest dispositiu</strong>. No compartim ni venem la teva informació. LunaSync funciona 100% offline.', exportDataBtn: 'Exportar les meves dades', resetDataBtn: 'Esborrar totes les dades',
+    installTitle: '📱 Instal·lar LunaSync', installCopy: 'A iPhone: comparteix aquesta pàgina i toca <strong>Afegir a la pantalla d’inici</strong>. A Android: obre el menú del navegador i toca <strong>Instal·lar app</strong>.', installHint: 'L’app continuarà guardant les dades en aquest dispositiu.',
+    medicalTitle: '⚠️ Avís mèdic', medicalCopy: 'LunaSync és una eina de seguiment personal i no substitueix el consell mèdic professional. Consulta sempre amb la teva ginecòloga o metgessa per qualsevol preocupació de salut.',
+    toastName: 'Escriu el teu nom per continuar', toastCycle: 'El cicle ha d’estar entre 21 i 45 dies', toastPeriod: 'La regla ha d’estar entre 2 i 10 dies', toastLastPeriod: 'Selecciona l’inici de la teva última regla', toastWelcome: 'Benvinguda a LunaSync', toastSaved: '✅ Perfil desat'
+  },
+  en: {
+    navHoy: 'Today', navCiclo: 'Cycle', navLuna: 'Luna AI', navPerfil: 'Profile',
+    onboardingCopy: ['Let’s set up your cycle in under a minute.', 'If you are not sure, 28 days is a good starting point.', 'With this date LunaSync will calculate your current phase and upcoming predictions.'],
+    onboardingNameLabel: 'What is your name?', onboardingNamePlaceholder: 'Your name', onboardingCycleLabel: 'Average cycle length', onboardingPeriodLabel: 'First day of your last period', onboardingNext: 'Continue', onboardingStart: 'Start',
+    profileTitle: '👤 Your profile', profileLanguageLabel: 'Language', profileNameLabel: 'Name', profileNamePlaceholder: 'Your name', profileNameHint: 'Used to personalize Luna AI and your summaries.', profileCycleLabel: 'Average cycle length (days)', profilePeriodLabel: 'Average period length (days)', profileDobLabel: 'Date of birth', profileGoalLabel: 'Goal',
+    goalHealth: 'General health', goalPregnancy: 'Trying to conceive', goalContraception: 'Natural contraception', goalPms: 'Manage PMS',
+    profileSaveBtn: 'Save profile', privacyTitle: '🔒 Privacy', privacyCopy: 'All your data is stored <strong>only on this device</strong>. We do not share or sell your information. LunaSync works 100% offline.', exportDataBtn: 'Export my data', resetDataBtn: 'Delete all my data',
+    installTitle: '📱 Install LunaSync', installCopy: 'On iPhone: share this page and tap <strong>Add to Home Screen</strong>. On Android: open the browser menu and tap <strong>Install app</strong>.', installHint: 'The app will keep storing data on this device.',
+    medicalTitle: '⚠️ Medical notice', medicalCopy: 'LunaSync is a personal tracking tool and does not replace professional medical advice. Always consult your doctor or gynecologist for health concerns.',
+    toastName: 'Enter your name to continue', toastCycle: 'Cycle length must be between 21 and 45 days', toastPeriod: 'Period length must be between 2 and 10 days', toastLastPeriod: 'Select the start of your last period', toastWelcome: 'Welcome to LunaSync', toastSaved: '✅ Profile saved'
+  }
+};
 
 // ============ SYMPTOMS ============
 const SYMPTOMS = [
@@ -1305,6 +1403,65 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function getLang() {
+  return I18N[state.language] ? state.language : 'es';
+}
+
+function t(key) {
+  return I18N[getLang()][key] || I18N.es[key] || key;
+}
+
+function setText(id, value, html = false) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (html) el.innerHTML = value;
+  else el.textContent = value;
+}
+
+function applyLanguage() {
+  const lang = getLang();
+  document.documentElement.lang = lang;
+
+  [
+    'navHoy','navCiclo','navLuna','navPerfil','profileTitle','profileLanguageLabel',
+    'profileNameLabel','profileNameHint','profileCycleLabel','profilePeriodLabel',
+    'profileDobLabel','profileGoalLabel','goalHealth','goalPregnancy','goalContraception',
+    'goalPms','profileSaveBtn','privacyTitle','exportDataBtn','resetDataBtn',
+    'installTitle','installHint','medicalTitle','onboardingNameLabel',
+    'onboardingCycleLabel','onboardingPeriodLabel'
+  ].forEach(id => setText(id, t(id)));
+
+  setText('privacyCopy', t('privacyCopy'), true);
+  setText('installCopy', t('installCopy'), true);
+  setText('medicalCopy', t('medicalCopy'), true);
+
+  const onboardingName = document.getElementById('onboardingName');
+  if (onboardingName) onboardingName.placeholder = t('onboardingNamePlaceholder');
+  const profileName = document.getElementById('profileName');
+  if (profileName) profileName.placeholder = t('profileNamePlaceholder');
+  const profileLanguage = document.getElementById('profileLanguage');
+  if (profileLanguage) profileLanguage.value = lang;
+
+  renderOnboardingStep();
+}
+
+function initLanguageGate() {
+  if (state.language) return false;
+  document.getElementById('languageGate').classList.add('active');
+  document.querySelector('.nav').style.display = 'none';
+  return true;
+}
+
+function setLanguage(lang) {
+  state.language = lang;
+  saveState();
+  document.getElementById('languageGate').classList.remove('active');
+  document.querySelector('.nav').style.display = '';
+  applyLanguage();
+  renderHome();
+  initOnboarding();
 }
 
 // ============ CYCLE LOGIC ============
@@ -1633,6 +1790,7 @@ function exportCalendar() {
 
 // ============ PROFILE ============
 function loadProfile() {
+  document.getElementById('profileLanguage').value = getLang();
   document.getElementById('profileName').value = state.name || '';
   document.getElementById('profileCycleLen').value = state.cycleLength || 28;
   document.getElementById('profilePeriodLen').value = state.periodLength || 5;
@@ -1644,18 +1802,19 @@ function loadProfile() {
 }
 
 function saveProfile() {
+  const language = document.getElementById('profileLanguage').value || getLang();
   const name = document.getElementById('profileName').value.trim();
   const cycleLength = parseInt(document.getElementById('profileCycleLen').value, 10);
   const periodLength = parseInt(document.getElementById('profilePeriodLen').value, 10);
   const groqKey = document.getElementById('profileGroqKey').value.trim();
 
   if (!cycleLength || cycleLength < 21 || cycleLength > 45) {
-    showToast('El ciclo debe estar entre 21 y 45 días');
+    showToast(t('toastCycle'));
     return;
   }
 
   if (!periodLength || periodLength < 2 || periodLength > 10) {
-    showToast('El periodo debe estar entre 2 y 10 días');
+    showToast(t('toastPeriod'));
     return;
   }
 
@@ -1664,6 +1823,7 @@ function saveProfile() {
     return;
   }
 
+  state.language = language;
   state.name = name;
   state.cycleLength = cycleLength;
   state.periodLength = periodLength;
@@ -1672,9 +1832,10 @@ function saveProfile() {
   state.groqKey = groqKey;
   state.aiConsent = document.getElementById('profileAiConsent').checked;
   saveState();
+  applyLanguage();
   renderHome();
   updateGroqStatus();
-  showToast('✅ Perfil guardado');
+  showToast(t('toastSaved'));
 }
 
 function updateGroqStatus() {
@@ -1907,11 +2068,7 @@ function initOnboarding() {
 }
 
 function renderOnboardingStep() {
-  const copy = [
-    'Vamos a configurar tu ciclo en menos de un minuto.',
-    'Si no lo sabes exacto, 28 días es una buena base para empezar.',
-    'Con esta fecha LunaSync calculará tu fase actual y próximas predicciones.'
-  ];
+  const copy = t('onboardingCopy');
 
   document.querySelectorAll('.onboarding-step').forEach((step, idx) => {
     step.classList.toggle('active', idx === onboardingStep);
@@ -1923,15 +2080,15 @@ function renderOnboardingStep() {
   document.getElementById('onboardingCopy').textContent = copy[onboardingStep];
   document.getElementById('onboardingBack').disabled = onboardingStep === 0;
   document.getElementById('onboardingNext').textContent = onboardingStep === 2
-    ? 'Empezar'
-    : 'Continuar';
+    ? t('onboardingStart')
+    : t('onboardingNext');
 }
 
 function nextOnboardingStep() {
   if (onboardingStep === 0) {
     const name = document.getElementById('onboardingName').value.trim();
     if (!name) {
-      showToast('Escribe tu nombre para continuar');
+      showToast(t('toastName'));
       return;
     }
   }
@@ -1939,7 +2096,7 @@ function nextOnboardingStep() {
   if (onboardingStep === 1) {
     const cycleLength = parseInt(document.getElementById('onboardingCycleLen').value, 10);
     if (!cycleLength || cycleLength < 21 || cycleLength > 45) {
-      showToast('El ciclo debe estar entre 21 y 45 días');
+      showToast(t('toastCycle'));
       return;
     }
   }
@@ -1967,7 +2124,7 @@ function completeOnboarding() {
   const lastPeriod = document.getElementById('onboardingLastPeriod').value;
 
   if (!lastPeriod) {
-    showToast('Selecciona el inicio de tu último periodo');
+    showToast(t('toastLastPeriod'));
     return;
   }
 
@@ -1983,7 +2140,7 @@ function completeOnboarding() {
   document.getElementById('onboarding').classList.remove('active');
   document.querySelector('.nav').style.display = '';
   renderHome();
-  showToast('Bienvenida a LunaSync');
+  showToast(t('toastWelcome'));
 }
 
 // ============ NAVIGATION ============
@@ -2000,8 +2157,9 @@ function showScreen(name, navBtn) {
 
 // ============ INIT ============
 initPwa();
+applyLanguage();
 renderHome();
-initOnboarding();
+if (!initLanguageGate()) initOnboarding();
 </script>
 </body>
 </html>
