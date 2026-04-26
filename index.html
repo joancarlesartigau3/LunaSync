@@ -866,6 +866,93 @@
     display: block;
     margin-bottom: 2px;
   }
+
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 100px;
+    background: rgba(212,168,83,0.16);
+    color: #b8863a;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .premium-card {
+    border: 1px solid rgba(212,168,83,0.24);
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(253,246,240,0.98));
+  }
+
+  .premium-feature {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-top: 1px solid rgba(45,35,33,0.07);
+  }
+
+  .premium-feature:first-of-type { border-top: 0; }
+
+  .premium-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212,168,83,0.12);
+    flex-shrink: 0;
+  }
+
+  .premium-feature-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .premium-feature-copy {
+    color: #888;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .premium-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 700;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(45,35,33,0.28);
+    padding: 18px;
+  }
+
+  .premium-modal.active { display: flex; }
+
+  .premium-sheet {
+    width: 100%;
+    max-width: 440px;
+    background: white;
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: 0 18px 55px rgba(45,35,33,0.2);
+    animation: fadeIn 0.25s ease;
+  }
+
+  .premium-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    color: var(--ink);
+    margin: 8px 0 2px;
+  }
+
+  .premium-price span {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #999;
+  }
 </style>
 </head>
 <body>
@@ -1086,6 +1173,28 @@
       </div>
       <button class="secondary-btn" onclick="exportCalendar()">Exportar al calendario</button>
     </div>
+
+    <div class="card premium-card">
+      <div class="card-title" style="justify-content:space-between">
+        <span>📊 Mis patrones</span>
+        <span class="premium-badge">Premium</span>
+      </div>
+      <div class="premium-feature">
+        <div class="premium-icon">🌡️</div>
+        <div>
+          <div class="premium-feature-title">Tendencias por ciclo</div>
+          <div class="premium-feature-copy">Síntomas, flujo y humor comparados durante los últimos ciclos.</div>
+        </div>
+      </div>
+      <div class="premium-feature">
+        <div class="premium-icon">🌙</div>
+        <div>
+          <div class="premium-feature-title">Análisis mensual con Luna</div>
+          <div class="premium-feature-copy">Resumen personalizado con patrones y recomendaciones accionables.</div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="openPremium('patterns')">Desbloquear patrones</button>
+    </div>
   </div>
 
   <!-- SCREEN: LUNA (AI Chat) -->
@@ -1117,6 +1226,17 @@
           oninput="autoResize(this)"></textarea>
         <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
       </div>
+    </div>
+
+    <div class="card premium-card" style="margin-top:16px">
+      <div class="card-title" style="justify-content:space-between">
+        <span>✨ Luna Pro</span>
+        <span class="premium-badge">Premium</span>
+      </div>
+      <div style="font-size:14px;color:#888;line-height:1.6">
+        Preguntas profundas sobre patrones, preparación de la regla, energía, piel, sueño y nutrición con memoria del último ciclo.
+      </div>
+      <button class="save-btn" onclick="openPremium('luna-pro')">Activar Luna Pro</button>
     </div>
   </div>
 
@@ -1179,6 +1299,38 @@
       <button class="save-btn" id="profileSaveBtn" onclick="saveProfile()">Guardar perfil</button>
     </div>
 
+    <div class="card premium-card">
+      <div class="card-title" style="justify-content:space-between">
+        <span>💎 LunaSync Premium</span>
+        <span class="premium-badge" id="planBadge">Gratis</span>
+      </div>
+      <div class="premium-price">4,99€ <span>/ mes</span></div>
+      <div class="field-hint">La base de la app seguirá siendo gratuita: registro diario, calendario, predicciones básicas, exportación de datos y privacidad local.</div>
+      <div class="premium-feature">
+        <div class="premium-icon">📊</div>
+        <div>
+          <div class="premium-feature-title">Patrones avanzados</div>
+          <div class="premium-feature-copy">Gráficos de síntomas, humor y flujo por fase y por ciclo.</div>
+        </div>
+      </div>
+      <div class="premium-feature">
+        <div class="premium-icon">🌙</div>
+        <div>
+          <div class="premium-feature-title">Luna Pro</div>
+          <div class="premium-feature-copy">Análisis mensual y respuestas con más contexto del historial.</div>
+        </div>
+      </div>
+      <div class="premium-feature">
+        <div class="premium-icon">🔔</div>
+        <div>
+          <div class="premium-feature-title">Recordatorios inteligentes</div>
+          <div class="premium-feature-copy">Avisos de regla, ventana fértil, autocuidado y registro diario.</div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="openPremium('profile')">Ver Premium</button>
+      <button class="secondary-btn" onclick="activatePremiumDemo()">Activar Premium demo</button>
+    </div>
+
     <div class="card">
       <div class="card-title" id="privacyTitle">🔒 Privacidad</div>
       <div id="privacyCopy" style="font-size:14px;color:#888;line-height:1.6">
@@ -1231,6 +1383,42 @@
 
 <div class="toast" id="toast"></div>
 
+<div class="premium-modal" id="premiumModal" onclick="if(event.target===this)closePremium()">
+  <div class="premium-sheet">
+    <div class="card-title" style="justify-content:space-between;margin-bottom:8px">
+      <span>💎 LunaSync Premium</span>
+      <button onclick="closePremium()" style="border:none;background:none;font-size:22px;color:#999;cursor:pointer">×</button>
+    </div>
+    <div style="font-size:14px;color:#888;line-height:1.6">
+      Premium está pensado para las usuarias que ya registran su ciclo y quieren entender patrones reales, no solo apuntar fechas.
+    </div>
+    <div class="premium-price">4,99€ <span>/ mes</span></div>
+    <div class="premium-feature">
+      <div class="premium-icon">📊</div>
+      <div>
+        <div class="premium-feature-title">Mis patrones</div>
+        <div class="premium-feature-copy">Gráficos de síntomas, humor, flujo y fases en los últimos ciclos.</div>
+      </div>
+    </div>
+    <div class="premium-feature">
+      <div class="premium-icon">✨</div>
+      <div>
+        <div class="premium-feature-title">Análisis mensual con Luna</div>
+        <div class="premium-feature-copy">Un resumen útil de tu mes con señales recurrentes y recomendaciones.</div>
+      </div>
+    </div>
+    <div class="premium-feature">
+      <div class="premium-icon">🔔</div>
+      <div>
+        <div class="premium-feature-title">Recordatorios inteligentes</div>
+        <div class="premium-feature-copy">Notificaciones de regla, autocuidado, fase fértil y registro diario.</div>
+      </div>
+    </div>
+    <button class="save-btn" onclick="activatePremiumDemo()">Probar Premium demo</button>
+    <button class="secondary-btn" onclick="closePremium()">Seguir gratis</button>
+  </div>
+</div>
+
 <script>
 // ============ STATE ============
 let state = JSON.parse(localStorage.getItem('lunasync') || '{}');
@@ -1242,6 +1430,7 @@ if (!state.periodDays) state.periodDays = []; // array of "YYYY-MM-DD"
 if (!state.logs) state.logs = {}; // date -> {mood, symptoms, flow}
 if (!state.name) state.name = '';
 if (!('language' in state)) state.language = '';
+if (!state.plan) state.plan = 'free';
 
 let calViewDate = new Date();
 let chatHistory = [];
@@ -1799,6 +1988,7 @@ function loadProfile() {
   document.getElementById('profileGroqKey').value = state.groqKey || '';
   document.getElementById('profileAiConsent').checked = !!state.aiConsent;
   updateGroqStatus();
+  updatePlanStatus();
 }
 
 function saveProfile() {
@@ -1835,6 +2025,7 @@ function saveProfile() {
   applyLanguage();
   renderHome();
   updateGroqStatus();
+  updatePlanStatus();
   showToast(t('toastSaved'));
 }
 
@@ -1847,6 +2038,41 @@ function updateGroqStatus() {
     ? 'Luna AI activada en este dispositivo'
     : 'Luna AI sin activar';
   status.classList.toggle('ready', hasKey);
+}
+
+function updatePlanStatus() {
+  const badge = document.getElementById('planBadge');
+  if (!badge) return;
+  const premium = state.plan === 'premium';
+  badge.textContent = premium ? 'Premium' : 'Gratis';
+  badge.classList.toggle('ready', premium);
+}
+
+function isPremium() {
+  return state.plan === 'premium';
+}
+
+function openPremium(source = 'feature') {
+  if (isPremium()) {
+    showToast('Premium ya está activo');
+    return;
+  }
+  state.lastPremiumIntent = source;
+  saveState();
+  document.getElementById('premiumModal').classList.add('active');
+}
+
+function closePremium() {
+  document.getElementById('premiumModal').classList.remove('active');
+}
+
+function activatePremiumDemo() {
+  state.plan = 'premium';
+  state.premiumDemoActivatedAt = new Date().toISOString();
+  saveState();
+  updatePlanStatus();
+  closePremium();
+  showToast('Premium demo activado');
 }
 
 function exportData() {
@@ -2153,12 +2379,14 @@ function showScreen(name, navBtn) {
   if (name === 'ciclo') renderCalendar();
   if (name === 'perfil') loadProfile();
   if (name === 'hoy') renderHome();
+  updatePlanStatus();
 }
 
 // ============ INIT ============
 initPwa();
 applyLanguage();
 renderHome();
+updatePlanStatus();
 if (!initLanguageGate()) initOnboarding();
 </script>
 </body>
