@@ -107,7 +107,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px 16px;
+    padding: 8px 8px;
     border-radius: 12px;
     transition: all 0.2s;
     color: #bbb;
@@ -119,8 +119,8 @@
   .nav-btn.active .nav-icon { background: rgba(232,99,122,0.12); }
 
   .nav-icon {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -953,6 +953,73 @@
     font-size: 13px;
     color: #999;
   }
+
+  .pricing-grid {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .pricing-card {
+    border: 1.5px solid rgba(212,168,83,0.24);
+    border-radius: 18px;
+    padding: 14px;
+    background: rgba(255,255,255,0.78);
+  }
+
+  .pricing-card.featured {
+    border-color: rgba(232,99,122,0.38);
+    background: rgba(232,99,122,0.06);
+  }
+
+  .pricing-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .pricing-copy {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.45;
+  }
+
+  .pattern-row {
+    margin: 12px 0;
+  }
+
+  .pattern-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 6px;
+  }
+
+  .pattern-track {
+    height: 9px;
+    border-radius: 100px;
+    background: var(--mist);
+    overflow: hidden;
+  }
+
+  .pattern-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--rose), var(--gold));
+  }
+
+  .premium-kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
 </style>
 </head>
 <body>
@@ -1240,6 +1307,11 @@
     </div>
   </div>
 
+  <!-- SCREEN: PREMIUM -->
+  <div class="screen" id="screen-premium">
+    <div id="premiumScreenContent"></div>
+  </div>
+
   <!-- SCREEN: PERFIL -->
   <div class="screen" id="screen-perfil">
     <div class="card">
@@ -1376,6 +1448,10 @@
     <div class="nav-icon">🌙</div>
     <span id="navLuna">Luna AI</span>
   </button>
+  <button class="nav-btn" onclick="showScreen('premium', this)">
+    <div class="nav-icon">💎</div>
+    <span id="navPremium">Premium</span>
+  </button>
   <button class="nav-btn" onclick="showScreen('perfil', this)">
     <div class="nav-icon">👤</div>
     <span id="navPerfil">Perfil</span>
@@ -1441,7 +1517,7 @@ let onboardingStep = 0;
 
 const I18N = {
   es: {
-    appTitle: 'LunaSync — Tu ciclo, tu ritmo', manifestDescription: 'Seguimiento privado de ciclo menstrual con Luna AI.', navHoy: 'Hoy', navCiclo: 'Ciclo', navLuna: 'Luna AI', navPerfil: 'Perfil',
+    appTitle: 'LunaSync — Tu ciclo, tu ritmo', manifestDescription: 'Seguimiento privado de ciclo menstrual con Luna AI.', navHoy: 'Hoy', navCiclo: 'Ciclo', navLuna: 'Luna AI', navPremium: 'Premium', navPerfil: 'Perfil',
     onboardingCopy: ['Vamos a configurar tu ciclo en menos de un minuto.', 'Si no lo sabes exacto, 28 días es una buena base para empezar.', 'Con esta fecha LunaSync calculará tu fase actual y próximas predicciones.'],
     onboardingNameLabel: '¿Cómo te llamas?', onboardingNamePlaceholder: 'Tu nombre', onboardingCycleLabel: 'Duración media de tu ciclo', onboardingPeriodLabel: 'Primer día de tu último periodo', onboardingNext: 'Continuar', onboardingStart: 'Empezar', toastLanguageChanged: 'Idioma cambiado',
     profileTitle: '👤 Tu perfil', profileLanguageLabel: 'Idioma', profileNameLabel: 'Nombre', profileNamePlaceholder: 'Tu nombre', profileNameHint: 'Se usa para personalizar Luna AI y tus resúmenes.', profileCycleLabel: 'Duración media del ciclo (días)', profilePeriodLabel: 'Duración media del periodo (días)', profileDobLabel: 'Fecha de nacimiento', profileGoalLabel: 'Objetivo',
@@ -1461,6 +1537,7 @@ const I18N = {
     lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Preguntas profundas sobre patrones, preparación de la regla, energía, piel, sueño y nutrición con memoria del último ciclo.', activateLunaProBtn: 'Activar Luna Pro',
     premiumFeature1Title: 'Patrones avanzados', premiumFeature1Copy: 'Gráficos de síntomas, humor y flujo por fase y por ciclo.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Análisis mensual y respuestas con más contexto del historial.', premiumFeature3Title: 'Recordatorios inteligentes', premiumFeature3Copy: 'Avisos de regla, ventana fértil, autocuidado y registro diario.',
     premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium está pensado para las usuarias que ya registran su ciclo y quieren entender patrones reales, no solo apuntar fechas.', premiumModalFeature1Title: 'Mis patrones', premiumModalFeature1Copy: 'Gráficos de síntomas, humor, flujo y fases en los últimos ciclos.', premiumModalFeature2Title: 'Análisis mensual con Luna', premiumModalFeature2Copy: 'Un resumen útil de tu mes con señales recurrentes y recomendaciones.', premiumModalFeature3Title: 'Recordatorios inteligentes', premiumModalFeature3Copy: 'Notificaciones de regla, autocuidado, fase fértil y registro diario.', premiumModalDemoBtn: 'Probar Premium demo', premiumModalFreeBtn: 'Seguir gratis',
+    premiumScreenTitle: '💎 LunaSync Premium', premiumLockedTitle: 'Entiende tus patrones de verdad', premiumLockedCopy: 'El registro diario y el calendario siguen gratis. Premium desbloquea análisis avanzados, resúmenes del ciclo y herramientas de seguimiento más profundas.', premiumActiveTitle: 'Premium activo', premiumActiveCopy: 'Tus herramientas avanzadas están disponibles en este dispositivo.', premiumTrialBtn: 'Probar 30 días gratis', premiumMonthlyBtn: 'Mensual 4,99€', premiumYearlyBtn: 'Anual 39,99€', premiumPlusBtn: 'Premium+ 7,99€', premiumMonthlyCopy: 'Patrones, análisis mensual y recordatorios inteligentes.', premiumYearlyCopy: 'La opción más rentable para usuarias constantes.', premiumPlusCopy: 'Incluye Luna Pro con análisis más profundo del historial.', premiumFreePlanTitle: 'Gratis', premiumFreePlanCopy: 'Registro diario, calendario, predicciones básicas, exportación y privacidad local.', premiumStatsTitle: 'Resumen premium', premiumSymptomsTitle: 'Síntomas más repetidos', premiumMoodTitle: 'Humor registrado', premiumFlowTitle: 'Flujo registrado', premiumInsightTitle: 'Análisis mensual local', premiumInsightBtn: 'Generar análisis del mes', premiumNoData: 'Aún no hay registros suficientes. Guarda algunos días de síntomas, humor o flujo para ver patrones.', premiumLogsCount: 'Registros', premiumPeriodDaysCount: 'Días de regla', premiumCurrentPhase: 'Fase actual', premiumNoMood: 'Sin humor registrado', premiumNoFlow: 'Sin flujo registrado', premiumInsightEmpty: 'Pulsa el botón para generar un resumen privado con los datos guardados en este dispositivo.', premiumInsightText: 'Este mes has registrado {logs} días. Lo más repetido ha sido {symptom}. El humor más frecuente ha sido {mood} y el flujo más común {flow}. Recomendación: observa si estos patrones se repiten el próximo ciclo antes de sacar conclusiones.',
     months: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdaysShort: ['Lu','Ma','Mi','Ju','Vi','Sá','Do'],
     symptoms: ['Cabeza','Hinchazón','Calambres','Cansancio','Náuseas','Retención agua','Acné','Energía alta','Antojos','Ansiedad','Sensibilidad','Libido alta','Bajón de ánimo','Piel radiante'],
     aiLanguage: 'español',
@@ -1472,7 +1549,7 @@ const I18N = {
     ]
   },
   ca: {
-    appTitle: 'LunaSync — El teu cicle, el teu ritme', manifestDescription: 'Seguiment privat del cicle menstrual amb Luna AI.', navHoy: 'Avui', navCiclo: 'Cicle', navLuna: 'Luna AI', navPerfil: 'Perfil',
+    appTitle: 'LunaSync — El teu cicle, el teu ritme', manifestDescription: 'Seguiment privat del cicle menstrual amb Luna AI.', navHoy: 'Avui', navCiclo: 'Cicle', navLuna: 'Luna AI', navPremium: 'Premium', navPerfil: 'Perfil',
     onboardingCopy: ['Configurarem el teu cicle en menys d’un minut.', 'Si no ho saps exacte, 28 dies és una bona base per començar.', 'Amb aquesta data LunaSync calcularà la fase actual i les properes prediccions.'],
     onboardingNameLabel: 'Com et dius?', onboardingNamePlaceholder: 'El teu nom', onboardingCycleLabel: 'Durada mitjana del teu cicle', onboardingPeriodLabel: 'Primer dia de la teva última regla', onboardingNext: 'Continuar', onboardingStart: 'Començar', toastLanguageChanged: 'Idioma canviat',
     profileTitle: '👤 El teu perfil', profileLanguageLabel: 'Idioma', profileNameLabel: 'Nom', profileNamePlaceholder: 'El teu nom', profileNameHint: 'S’utilitza per personalitzar Luna AI i els teus resums.', profileCycleLabel: 'Durada mitjana del cicle (dies)', profilePeriodLabel: 'Durada mitjana de la regla (dies)', profileDobLabel: 'Data de naixement', profileGoalLabel: 'Objectiu',
@@ -1492,6 +1569,7 @@ const I18N = {
     lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Preguntes profundes sobre patrons, preparació de la regla, energia, pell, son i nutrició amb memòria de l’últim cicle.', activateLunaProBtn: 'Activar Luna Pro',
     premiumFeature1Title: 'Patrons avançats', premiumFeature1Copy: 'Gràfics de símptomes, estat d’ànim i flux per fase i per cicle.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Anàlisi mensual i respostes amb més context de l’historial.', premiumFeature3Title: 'Recordatoris intel·ligents', premiumFeature3Copy: 'Avisos de regla, finestra fèrtil, autocura i registre diari.',
     premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium està pensat per a usuàries que ja registren el cicle i volen entendre patrons reals, no només apuntar dates.', premiumModalFeature1Title: 'Els meus patrons', premiumModalFeature1Copy: 'Gràfics de símptomes, estat d’ànim, flux i fases en els últims cicles.', premiumModalFeature2Title: 'Anàlisi mensual amb Luna', premiumModalFeature2Copy: 'Un resum útil del teu mes amb senyals recurrents i recomanacions.', premiumModalFeature3Title: 'Recordatoris intel·ligents', premiumModalFeature3Copy: 'Notificacions de regla, autocura, fase fèrtil i registre diari.', premiumModalDemoBtn: 'Provar Premium demo', premiumModalFreeBtn: 'Continuar gratis',
+    premiumScreenTitle: '💎 LunaSync Premium', premiumLockedTitle: 'Entén els teus patrons de veritat', premiumLockedCopy: 'El registre diari i el calendari continuen gratis. Premium desbloqueja anàlisis avançades, resums del cicle i eines de seguiment més profundes.', premiumActiveTitle: 'Premium actiu', premiumActiveCopy: 'Les teves eines avançades estan disponibles en aquest dispositiu.', premiumTrialBtn: 'Provar 30 dies gratis', premiumMonthlyBtn: 'Mensual 4,99€', premiumYearlyBtn: 'Anual 39,99€', premiumPlusBtn: 'Premium+ 7,99€', premiumMonthlyCopy: 'Patrons, anàlisi mensual i recordatoris intel·ligents.', premiumYearlyCopy: 'L’opció més rendible per a usuàries constants.', premiumPlusCopy: 'Inclou Luna Pro amb anàlisi més profunda de l’historial.', premiumFreePlanTitle: 'Gratis', premiumFreePlanCopy: 'Registre diari, calendari, prediccions bàsiques, exportació i privacitat local.', premiumStatsTitle: 'Resum premium', premiumSymptomsTitle: 'Símptomes més repetits', premiumMoodTitle: 'Estat d’ànim registrat', premiumFlowTitle: 'Flux registrat', premiumInsightTitle: 'Anàlisi mensual local', premiumInsightBtn: 'Generar anàlisi del mes', premiumNoData: 'Encara no hi ha prou registres. Desa alguns dies de símptomes, estat d’ànim o flux per veure patrons.', premiumLogsCount: 'Registres', premiumPeriodDaysCount: 'Dies de regla', premiumCurrentPhase: 'Fase actual', premiumNoMood: 'Sense estat d’ànim registrat', premiumNoFlow: 'Sense flux registrat', premiumInsightEmpty: 'Prem el botó per generar un resum privat amb les dades guardades en aquest dispositiu.', premiumInsightText: 'Aquest mes has registrat {logs} dies. El més repetit ha estat {symptom}. L’estat d’ànim més freqüent ha estat {mood} i el flux més comú {flow}. Recomanació: observa si aquests patrons es repeteixen el proper cicle abans de treure conclusions.',
     months: ['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'], weekdaysShort: ['Dl','Dt','Dc','Dj','Dv','Ds','Dg'],
     symptoms: ['Cap','Inflor','Rampes','Cansament','Nàusees','Retenció d’aigua','Acne','Energia alta','Desitjos','Ansietat','Sensibilitat','Libido alta','Baixada d’ànim','Pell radiant'],
     aiLanguage: 'català',
@@ -1503,7 +1581,7 @@ const I18N = {
     ]
   },
   en: {
-    appTitle: 'LunaSync — Your cycle, your rhythm', manifestDescription: 'Private menstrual cycle tracking with Luna AI.', navHoy: 'Today', navCiclo: 'Cycle', navLuna: 'Luna AI', navPerfil: 'Profile',
+    appTitle: 'LunaSync — Your cycle, your rhythm', manifestDescription: 'Private menstrual cycle tracking with Luna AI.', navHoy: 'Today', navCiclo: 'Cycle', navLuna: 'Luna AI', navPremium: 'Premium', navPerfil: 'Profile',
     onboardingCopy: ['Let’s set up your cycle in under a minute.', 'If you are not sure, 28 days is a good starting point.', 'With this date LunaSync will calculate your current phase and upcoming predictions.'],
     onboardingNameLabel: 'What is your name?', onboardingNamePlaceholder: 'Your name', onboardingCycleLabel: 'Average cycle length', onboardingPeriodLabel: 'First day of your last period', onboardingNext: 'Continue', onboardingStart: 'Start', toastLanguageChanged: 'Language changed',
     profileTitle: '👤 Your profile', profileLanguageLabel: 'Language', profileNameLabel: 'Name', profileNamePlaceholder: 'Your name', profileNameHint: 'Used to personalize Luna AI and your summaries.', profileCycleLabel: 'Average cycle length (days)', profilePeriodLabel: 'Average period length (days)', profileDobLabel: 'Date of birth', profileGoalLabel: 'Goal',
@@ -1523,6 +1601,7 @@ const I18N = {
     lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Deeper questions about patterns, period prep, energy, skin, sleep and nutrition with memory of your last cycle.', activateLunaProBtn: 'Activate Luna Pro',
     premiumFeature1Title: 'Advanced patterns', premiumFeature1Copy: 'Charts for symptoms, mood and flow by phase and cycle.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Monthly analysis and answers with more history context.', premiumFeature3Title: 'Smart reminders', premiumFeature3Copy: 'Period, fertile window, self-care and daily log reminders.',
     premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium is for users who already track their cycle and want to understand real patterns, not just write down dates.', premiumModalFeature1Title: 'My patterns', premiumModalFeature1Copy: 'Charts for symptoms, mood, flow and phases across recent cycles.', premiumModalFeature2Title: 'Monthly analysis with Luna', premiumModalFeature2Copy: 'A useful monthly summary with recurring signals and recommendations.', premiumModalFeature3Title: 'Smart reminders', premiumModalFeature3Copy: 'Period, self-care, fertile phase and daily log notifications.', premiumModalDemoBtn: 'Try Premium demo', premiumModalFreeBtn: 'Keep using free',
+    premiumScreenTitle: '💎 LunaSync Premium', premiumLockedTitle: 'Understand your real patterns', premiumLockedCopy: 'Daily logging and the calendar stay free. Premium unlocks advanced analysis, cycle summaries and deeper tracking tools.', premiumActiveTitle: 'Premium active', premiumActiveCopy: 'Your advanced tools are available on this device.', premiumTrialBtn: 'Try 30 days free', premiumMonthlyBtn: 'Monthly €4.99', premiumYearlyBtn: 'Yearly €39.99', premiumPlusBtn: 'Premium+ €7.99', premiumMonthlyCopy: 'Patterns, monthly analysis and smart reminders.', premiumYearlyCopy: 'Best value for consistent users.', premiumPlusCopy: 'Includes Luna Pro with deeper history analysis.', premiumFreePlanTitle: 'Free', premiumFreePlanCopy: 'Daily log, calendar, basic predictions, export and local privacy.', premiumStatsTitle: 'Premium summary', premiumSymptomsTitle: 'Most repeated symptoms', premiumMoodTitle: 'Logged mood', premiumFlowTitle: 'Logged flow', premiumInsightTitle: 'Local monthly analysis', premiumInsightBtn: 'Generate monthly analysis', premiumNoData: 'Not enough logs yet. Save a few days of symptoms, mood or flow to see patterns.', premiumLogsCount: 'Logs', premiumPeriodDaysCount: 'Period days', premiumCurrentPhase: 'Current phase', premiumNoMood: 'No mood logged', premiumNoFlow: 'No flow logged', premiumInsightEmpty: 'Tap the button to generate a private summary from data stored on this device.', premiumInsightText: 'This month you logged {logs} days. The most repeated item was {symptom}. Your most frequent mood was {mood} and the most common flow was {flow}. Recommendation: watch whether these patterns repeat next cycle before drawing conclusions.',
     months: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdaysShort: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
     symptoms: ['Headache','Bloating','Cramps','Tiredness','Nausea','Water retention','Acne','High energy','Cravings','Anxiety','Tenderness','High libido','Low mood','Glowing skin'],
     aiLanguage: 'English',
@@ -1783,7 +1862,7 @@ function applyLanguage() {
   initPwa();
 
   [
-    'navHoy','navCiclo','navLuna','navPerfil','profileTitle','profileLanguageLabel',
+    'navHoy','navCiclo','navLuna','navPremium','navPerfil','profileTitle','profileLanguageLabel',
     'profileNameLabel','profileNameHint','profileCycleLabel','profilePeriodLabel',
     'profileDobLabel','profileGoalLabel','goalHealth','goalPregnancy','goalContraception',
     'goalPms','profileSaveBtn','privacyTitle','exportDataBtn','resetDataBtn',
@@ -1824,6 +1903,7 @@ function applyLanguage() {
   renderOnboardingStep();
   renderHome();
   if (document.getElementById('screen-ciclo').classList.contains('active')) renderCalendar();
+  if (document.getElementById('screen-premium')?.classList.contains('active')) renderPremiumScreen();
   updateGroqStatus();
   updatePlanStatus();
 }
@@ -2278,6 +2358,7 @@ function updatePlanStatus() {
         : t('premiumStatusFree');
     status.classList.toggle('ready', premium || trial);
   }
+  if (document.getElementById('screen-premium')?.classList.contains('active')) renderPremiumScreen();
 }
 
 function isPremium() {
@@ -2305,8 +2386,222 @@ function activatePremiumDemo() {
   state.trialEndsAt = addDays(TODAY_STR, 30);
   saveState();
   updatePlanStatus();
+  renderPremiumScreen();
   closePremium();
   showToast(t('toastPremiumDemo'));
+}
+
+function selectPremiumPlan(planId) {
+  state.selectedPremiumPlan = planId;
+  saveState();
+  openPremium(planId);
+}
+
+function countValues(values) {
+  return values.reduce((acc, item) => {
+    if (!item) return acc;
+    acc[item] = (acc[item] || 0) + 1;
+    return acc;
+  }, {});
+}
+
+function topItemsFromCounts(counts, limit = 4) {
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([label, value]) => ({ label, value }));
+}
+
+function translateSymptomLabel(label) {
+  const idx = SYMPTOMS.findIndex(item => item.l === label);
+  return t('symptoms')[idx] || label;
+}
+
+function formatFlowLabel(flow) {
+  const labels = {
+    ligero: t('flowLightLabel'),
+    normal: t('flowNormalLabel'),
+    abundante: t('flowHeavyLabel'),
+    'muy abundante': t('flowVeryHeavyLabel')
+  };
+  return labels[flow] || flow || t('premiumNoFlow');
+}
+
+function getPremiumPatternStats() {
+  const logs = Object.entries(state.logs || {})
+    .filter(([, log]) => log && (log.mood || log.flow || (log.symptoms || []).length))
+    .sort((a, b) => a[0].localeCompare(b[0]));
+  const recentLogs = logs.slice(-90);
+  const symptomCounts = {};
+  const moods = [];
+  const flows = [];
+
+  recentLogs.forEach(([, log]) => {
+    (log.symptoms || []).forEach(symptom => {
+      symptomCounts[symptom] = (symptomCounts[symptom] || 0) + 1;
+    });
+    if (log.mood) moods.push(log.mood);
+    if (log.flow) flows.push(log.flow);
+  });
+
+  return {
+    logs: recentLogs,
+    symptoms: topItemsFromCounts(symptomCounts).map(item => ({
+      label: translateSymptomLabel(item.label),
+      value: item.value
+    })),
+    moods: topItemsFromCounts(countValues(moods), 4),
+    flows: topItemsFromCounts(countValues(flows), 4).map(item => ({
+      label: formatFlowLabel(item.label),
+      value: item.value
+    }))
+  };
+}
+
+function renderPatternBars(items, emptyText) {
+  if (!items.length) return `<div class="field-hint">${emptyText}</div>`;
+  const max = Math.max(...items.map(item => item.value), 1);
+  return items.map(item => `
+    <div class="pattern-row">
+      <div class="pattern-label">
+        <span>${item.label}</span>
+        <strong>${item.value}</strong>
+      </div>
+      <div class="pattern-track">
+        <div class="pattern-fill" style="width:${Math.max(10, Math.round((item.value / max) * 100))}%"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPremiumScreen() {
+  const el = document.getElementById('premiumScreenContent');
+  if (!el) return;
+  el.innerHTML = isPremium() ? renderPremiumDashboard() : renderPremiumPaywall();
+}
+
+function renderPremiumPaywall() {
+  return `
+    <div class="card premium-card">
+      <div class="card-title">${t('premiumScreenTitle')}</div>
+      <div class="premium-price">4,99€ <span>${t('premiumPriceSuffix')}</span></div>
+      <div class="premium-feature-copy" style="margin-bottom:12px">${t('premiumLockedCopy')}</div>
+      <button class="save-btn" onclick="activatePremiumDemo()">${t('premiumTrialBtn')}</button>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-title">
+          <span>${t('premiumFreePlanTitle')}</span>
+          <span class="premium-badge">${t('freeWord')}</span>
+        </div>
+        <div class="pricing-copy">${t('premiumFreePlanCopy')}</div>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-title">
+          <span>${t('premiumMonthlyBtn')}</span>
+          <span class="premium-badge">${t('premiumWord')}</span>
+        </div>
+        <div class="pricing-copy">${t('premiumMonthlyCopy')}</div>
+        <button class="secondary-btn" onclick="selectPremiumPlan('monthly')">${t('premiumMonthlyBtn')}</button>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-title">
+          <span>${t('premiumYearlyBtn')}</span>
+          <span class="premium-badge">${t('premiumWord')}</span>
+        </div>
+        <div class="pricing-copy">${t('premiumYearlyCopy')}</div>
+        <button class="secondary-btn" onclick="selectPremiumPlan('yearly')">${t('premiumYearlyBtn')}</button>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-title">
+          <span>${t('premiumPlusBtn')}</span>
+          <span class="premium-badge">${t('premiumWord')}</span>
+        </div>
+        <div class="pricing-copy">${t('premiumPlusCopy')}</div>
+        <button class="secondary-btn" onclick="selectPremiumPlan('plus')">${t('premiumPlusBtn')}</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderPremiumDashboard() {
+  const stats = getPremiumPatternStats();
+  const cycleDay = getCycleDay();
+  const phase = getCurrentPhase(cycleDay);
+  const phaseName = phase ? phaseInfo(phase).name : t('noData');
+  const insight = state.premiumMonthlyInsight || t('premiumInsightEmpty');
+
+  return `
+    <div class="card premium-card">
+      <div class="card-title" style="justify-content:space-between">
+        <span>${t('premiumActiveTitle')}</span>
+        <span class="premium-badge ready">${state.plan === 'trial' ? t('trialWord') : t('premiumWord')}</span>
+      </div>
+      <div class="premium-feature-copy">${t('premiumActiveCopy')}</div>
+    </div>
+
+    <div class="premium-kpi-grid">
+      <div class="stat-box">
+        <div class="stat-value">${stats.logs.length}</div>
+        <div class="stat-label">${t('premiumLogsCount')}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">${state.periodDays.length}</div>
+        <div class="stat-label">${t('premiumPeriodDaysCount')}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">${t('premiumStatsTitle')}</div>
+      <div class="premium-feature">
+        <div class="premium-icon">🌙</div>
+        <div>
+          <div class="premium-feature-title">${t('premiumCurrentPhase')}</div>
+          <div class="premium-feature-copy">${phaseName}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">${t('premiumSymptomsTitle')}</div>
+      ${renderPatternBars(stats.symptoms, t('premiumNoData'))}
+    </div>
+
+    <div class="card">
+      <div class="card-title">${t('premiumMoodTitle')}</div>
+      ${renderPatternBars(stats.moods, t('premiumNoMood'))}
+    </div>
+
+    <div class="card">
+      <div class="card-title">${t('premiumFlowTitle')}</div>
+      ${renderPatternBars(stats.flows, t('premiumNoFlow'))}
+    </div>
+
+    <div class="card" style="margin-bottom:30px">
+      <div class="card-title">${t('premiumInsightTitle')}</div>
+      <div id="premiumInsight" class="premium-feature-copy" style="line-height:1.6">${insight}</div>
+      <button class="save-btn" onclick="generateMonthlyInsight()">${t('premiumInsightBtn')}</button>
+    </div>
+  `;
+}
+
+function generateMonthlyInsight() {
+  if (!isPremium()) {
+    renderPremiumScreen();
+    return;
+  }
+  const stats = getPremiumPatternStats();
+  const topSymptom = stats.symptoms[0]?.label || t('premiumNoData');
+  const topMood = stats.moods[0]?.label || t('premiumNoMood');
+  const topFlow = stats.flows[0]?.label || t('premiumNoFlow');
+  state.premiumMonthlyInsight = t('premiumInsightText')
+    .replace('{logs}', stats.logs.length)
+    .replace('{symptom}', topSymptom)
+    .replace('{mood}', topMood)
+    .replace('{flow}', topFlow);
+  saveState();
+  renderPremiumScreen();
 }
 
 function exportData() {
@@ -2643,6 +2938,7 @@ function showScreen(name, navBtn) {
   if (name === 'ciclo') renderCalendar();
   if (name === 'perfil') loadProfile();
   if (name === 'hoy') renderHome();
+  if (name === 'premium') renderPremiumScreen();
   updatePlanStatus();
 }
 
