@@ -268,13 +268,13 @@
 
   /* Flow selector */
   .flow-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     margin-bottom: 16px;
   }
 
   .flow-btn {
-    flex: 1;
     padding: 12px 8px;
     border-radius: 12px;
     border: 1.5px solid #E8E0DC;
@@ -294,6 +294,11 @@
   }
 
   .flow-emoji { font-size: 18px; display: block; margin-bottom: 3px; }
+
+  .flow-btn.flow-ligero.selected { background: rgba(232,99,122,0.07); }
+  .flow-btn.flow-normal.selected { background: rgba(232,99,122,0.12); }
+  .flow-btn.flow-abundante.selected { background: rgba(232,99,122,0.18); }
+  .flow-btn.flow-muy-abundante.selected { background: rgba(232,99,122,0.24); }
 
   /* Calendar */
   .calendar-grid {
@@ -510,6 +515,30 @@
     transition: border-color 0.15s;
   }
   .profile-input:focus { border-color: var(--rose); }
+
+  .field-hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.4;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 10px;
+    border-radius: 100px;
+    background: var(--mist);
+    color: #888;
+    font-size: 12px;
+  }
+
+  .status-pill.ready {
+    background: rgba(139,175,142,0.16);
+    color: #5a8a5e;
+  }
 
   .save-btn {
     width: 100%;
@@ -871,6 +900,22 @@
         <button class="mood-btn" onclick="selectMood(this, '🥰')">🥰</button>
       </div>
 
+      <div class="section-label" style="margin-top:16px">Flujo</div>
+      <div class="flow-row" id="flowRow">
+        <button class="flow-btn flow-ligero" onclick="selectFlow(this, 'ligero')">
+          <span class="flow-emoji">🩸</span>Ligero
+        </button>
+        <button class="flow-btn flow-normal" onclick="selectFlow(this, 'normal')">
+          <span class="flow-emoji">🩸🩸</span>Normal
+        </button>
+        <button class="flow-btn flow-abundante" onclick="selectFlow(this, 'abundante')">
+          <span class="flow-emoji">🩸🩸🩸</span>Abundante
+        </button>
+        <button class="flow-btn flow-muy-abundante" onclick="selectFlow(this, 'muy abundante')">
+          <span class="flow-emoji">🩸🩸🩸🩸</span>Muy abundante
+        </button>
+      </div>
+
       <div class="section-label" style="margin-top:16px">Síntomas</div>
       <div class="symptom-grid" id="symptomGrid"></div>
 
@@ -972,6 +1017,7 @@
       <div class="profile-field">
         <div class="profile-label">Nombre</div>
         <input class="profile-input" id="profileName" type="text" placeholder="Tu nombre">
+        <div class="field-hint">Se usa para personalizar Luna AI y tus resúmenes.</div>
       </div>
 
       <div class="profile-field">
@@ -1002,6 +1048,8 @@
       <div class="profile-field">
         <div class="profile-label">🔑 Groq API Key <span style="color:#E8637A;font-size:11px">(gratis en console.groq.com)</span></div>
         <input class="profile-input" id="profileGroqKey" type="password" placeholder="gsk_...">
+        <div class="status-pill" id="groqKeyStatus">Luna AI sin activar</div>
+        <div class="field-hint">Se guarda solo en este dispositivo. No la publiques dentro del HTML.</div>
       </div>
 
       <button class="save-btn" onclick="saveProfile()">Guardar perfil</button>
@@ -1014,6 +1062,7 @@
         No compartimos ni vendemos tu información. 
         LunaSync funciona 100% offline.
       </div>
+      <button class="save-btn" onclick="exportData()" style="margin-top:16px">Exportar mis datos</button>
     </div>
 
     <div class="card" style="margin-bottom:30px">
@@ -1124,17 +1173,30 @@ const PHASES = {
 
 // ============ HELPERS ============
 function formatDate(d) {
-  return d.toISOString().split('T')[0];
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function parseDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
 }
 
 function addDays(dateStr, n) {
-  const d = new Date(dateStr);
+  const d = parseDate(dateStr);
   d.setDate(d.getDate() + n);
   return formatDate(d);
 }
 
 function daysDiff(a, b) {
-  return Math.round((new Date(b) - new Date(a)) / 86400000);
+  return Math.round((parseDate(b) - parseDate(a)) / 86400000);
+}
+
+function ensureTodayLog() {
+  if (!state.logs[TODAY_STR]) state.logs[TODAY_STR] = {};
+  return state.logs[TODAY_STR];
 }
 
 function saveState() {
@@ -1286,6 +1348,12 @@ function renderHome() {
   document.querySelectorAll('.mood-btn').forEach(b => {
     b.classList.toggle('selected', b.textContent.trim() === selectedMood);
   });
+
+  // Flow
+  const selectedFlow = todayLog.flow || '';
+  document.querySelectorAll('.flow-btn').forEach(b => {
+    b.classList.toggle('selected', !!selectedFlow && b.textContent.trim().toLowerCase().includes(selectedFlow));
+  });
 }
 
 // ============ PERIOD TOGGLE ============
@@ -1303,9 +1371,9 @@ function togglePeriod() {
 
 // ============ LOG ============
 function toggleSymptom(name, el) {
-  if (!state.logs[TODAY_STR]) state.logs[TODAY_STR] = {};
-  if (!state.logs[TODAY_STR].symptoms) state.logs[TODAY_STR].symptoms = [];
-  const arr = state.logs[TODAY_STR].symptoms;
+  const log = ensureTodayLog();
+  if (!log.symptoms) log.symptoms = [];
+  const arr = log.symptoms;
   const idx = arr.indexOf(name);
   if (idx > -1) arr.splice(idx, 1);
   else arr.push(name);
@@ -1316,8 +1384,14 @@ function toggleSymptom(name, el) {
 function selectMood(btn, emoji) {
   document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
-  if (!state.logs[TODAY_STR]) state.logs[TODAY_STR] = {};
-  state.logs[TODAY_STR].mood = emoji;
+  ensureTodayLog().mood = emoji;
+  saveState();
+}
+
+function selectFlow(btn, flow) {
+  document.querySelectorAll('.flow-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  ensureTodayLog().flow = flow;
   saveState();
 }
 
@@ -1421,18 +1495,69 @@ function loadProfile() {
   document.getElementById('profileDob').value = state.dob || '';
   document.getElementById('profileGoal').value = state.goal || 'salud';
   document.getElementById('profileGroqKey').value = state.groqKey || '';
+  updateGroqStatus();
 }
 
 function saveProfile() {
-  state.name = document.getElementById('profileName').value;
-  state.cycleLength = parseInt(document.getElementById('profileCycleLen').value) || 28;
-  state.periodLength = parseInt(document.getElementById('profilePeriodLen').value) || 5;
+  const name = document.getElementById('profileName').value.trim();
+  const cycleLength = parseInt(document.getElementById('profileCycleLen').value, 10);
+  const periodLength = parseInt(document.getElementById('profilePeriodLen').value, 10);
+  const groqKey = document.getElementById('profileGroqKey').value.trim();
+
+  if (!cycleLength || cycleLength < 21 || cycleLength > 45) {
+    showToast('El ciclo debe estar entre 21 y 45 días');
+    return;
+  }
+
+  if (!periodLength || periodLength < 2 || periodLength > 10) {
+    showToast('El periodo debe estar entre 2 y 10 días');
+    return;
+  }
+
+  if (groqKey && !groqKey.startsWith('gsk_')) {
+    showToast('La clave de Groq suele empezar por gsk_');
+    return;
+  }
+
+  state.name = name;
+  state.cycleLength = cycleLength;
+  state.periodLength = periodLength;
   state.dob = document.getElementById('profileDob').value;
   state.goal = document.getElementById('profileGoal').value;
-  state.groqKey = document.getElementById('profileGroqKey').value.trim();
+  state.groqKey = groqKey;
   saveState();
   renderHome();
+  updateGroqStatus();
   showToast('✅ Perfil guardado');
+}
+
+function updateGroqStatus() {
+  const status = document.getElementById('groqKeyStatus');
+  if (!status) return;
+
+  const hasKey = !!(state.groqKey && state.groqKey.trim());
+  status.textContent = hasKey
+    ? 'Luna AI activada en este dispositivo'
+    : 'Luna AI sin activar';
+  status.classList.toggle('ready', hasKey);
+}
+
+function exportData() {
+  const payload = {
+    app: 'LunaSync',
+    exportedAt: new Date().toISOString(),
+    data: state
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lunasync-datos-${TODAY_STR}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('Datos exportados');
 }
 
 // ============ AI CHAT ============
@@ -1442,6 +1567,7 @@ function buildCycleContext() {
   const todayLog = state.logs[TODAY_STR] || {};
   const symptoms = todayLog.symptoms?.join(', ') || 'ninguno registrado';
   const mood = todayLog.mood || 'no registrado';
+  const flow = todayLog.flow || 'no registrado';
   const next = getNextPeriodDate();
   const daysUntil = next ? daysDiff(TODAY_STR, next) : null;
 
@@ -1458,6 +1584,7 @@ DATOS ACTUALES DE LA USUARIA:
 - Duración media del periodo: ${state.periodLength} días
 - Síntomas de hoy: ${symptoms}
 - Estado de ánimo hoy: ${mood}
+- Flujo de hoy: ${flow}
 - Próxima menstruación en: ${daysUntil !== null ? daysUntil + ' días' : 'desconocido'}
 - Objetivo: ${state.goal || 'salud general'}
 
@@ -1523,6 +1650,12 @@ async function sendMessage() {
 
     const data = await res.json();
     typingEl.remove();
+
+    if (!res.ok) {
+      const errMsg = data.error?.message || 'No he podido conectar con Groq.';
+      addChatMsg(`Revisa tu API key en Perfil. Groq respondió: ${errMsg}`, 'luna');
+      return;
+    }
 
     const reply = data.choices?.[0]?.message?.content || 'Lo siento, no pude procesar tu pregunta. Inténtalo de nuevo.';
     addChatMsg(reply, 'luna');
