@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#E8637A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="LunaSync">
 <title>LunaSync — Tu ciclo, tu ritmo</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -540,6 +544,60 @@
     color: #5a8a5e;
   }
 
+  .consent-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px;
+    border: 1.5px solid #E8E0DC;
+    border-radius: 14px;
+    background: rgba(247,240,244,0.55);
+    margin-top: 10px;
+  }
+
+  .consent-row input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--rose);
+    margin-top: 1px;
+  }
+
+  .consent-text {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.45;
+  }
+
+  .secondary-btn,
+  .danger-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    margin-top: 10px;
+  }
+
+  .secondary-btn {
+    border: 1.5px solid rgba(232,99,122,0.28);
+    background: rgba(232,99,122,0.06);
+    color: var(--rose);
+  }
+
+  .danger-btn {
+    border: 1.5px solid rgba(232,99,122,0.3);
+    background: white;
+    color: var(--rose);
+  }
+
+  .secondary-btn:hover,
+  .danger-btn:hover {
+    transform: translateY(-1px);
+  }
+
   .save-btn {
     width: 100%;
     padding: 15px;
@@ -974,6 +1032,7 @@
       <div id="upcomingEvents" style="font-size:14px;color:#888;line-height:2">
         Registra tu ciclo para ver predicciones
       </div>
+      <button class="secondary-btn" onclick="exportCalendar()">Exportar al calendario</button>
     </div>
   </div>
 
@@ -1050,6 +1109,10 @@
         <input class="profile-input" id="profileGroqKey" type="password" placeholder="gsk_...">
         <div class="status-pill" id="groqKeyStatus">Luna AI sin activar</div>
         <div class="field-hint">Se guarda solo en este dispositivo. No la publiques dentro del HTML.</div>
+        <label class="consent-row">
+          <input id="profileAiConsent" type="checkbox">
+          <span class="consent-text">Permito enviar mi contexto de ciclo a Groq cuando use Luna AI.</span>
+        </label>
       </div>
 
       <button class="save-btn" onclick="saveProfile()">Guardar perfil</button>
@@ -1063,6 +1126,16 @@
         LunaSync funciona 100% offline.
       </div>
       <button class="save-btn" onclick="exportData()" style="margin-top:16px">Exportar mis datos</button>
+      <button class="danger-btn" onclick="resetData()">Borrar todos mis datos</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📱 Instalar LunaSync</div>
+      <div style="font-size:14px;color:#888;line-height:1.6">
+        En iPhone: comparte esta página y toca <strong>Añadir a pantalla de inicio</strong>. 
+        En Android: abre el menú del navegador y toca <strong>Instalar app</strong>.
+      </div>
+      <div class="field-hint">La app seguirá guardando los datos en este dispositivo.</div>
     </div>
 
     <div class="card" style="margin-bottom:30px">
@@ -1192,6 +1265,30 @@ function addDays(dateStr, n) {
 
 function daysDiff(a, b) {
   return Math.round((parseDate(b) - parseDate(a)) / 86400000);
+}
+
+function icsDate(dateStr) {
+  return dateStr.replaceAll('-', '');
+}
+
+function escapeIcs(text) {
+  return String(text)
+    .replaceAll('\\', '\\\\')
+    .replaceAll(';', '\\;')
+    .replaceAll(',', '\\,')
+    .replaceAll('\n', '\\n');
+}
+
+function downloadTextFile(filename, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function ensureTodayLog() {
@@ -1487,6 +1584,53 @@ function nextMonth() {
   renderCalendar();
 }
 
+function exportCalendar() {
+  const next = getNextPeriodDate();
+  if (!next) {
+    showToast('Registra tu periodo primero');
+    return;
+  }
+
+  const ovDay = Math.round(state.cycleLength - 14);
+  const fertileStart = addDays(next, ovDay - 4);
+  const fertileEnd = addDays(next, ovDay + 2);
+  const ovulation = addDays(next, ovDay - 1);
+  const periodEnd = addDays(next, state.periodLength);
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const interval = Math.max(21, Math.min(45, state.cycleLength));
+
+  const event = (uid, summary, start, end, description, alarmDays = null) => [
+    'BEGIN:VEVENT',
+    `UID:${uid}-${TODAY_STR}@lunasync`,
+    `DTSTAMP:${stamp}`,
+    `SUMMARY:${escapeIcs(summary)}`,
+    `DTSTART;VALUE=DATE:${icsDate(start)}`,
+    `DTEND;VALUE=DATE:${icsDate(end)}`,
+    `RRULE:FREQ=DAILY;INTERVAL=${interval}`,
+    `DESCRIPTION:${escapeIcs(description)}`,
+    alarmDays ? 'BEGIN:VALARM' : '',
+    alarmDays ? `TRIGGER:-P${alarmDays}D` : '',
+    alarmDays ? 'ACTION:DISPLAY' : '',
+    alarmDays ? `DESCRIPTION:${escapeIcs(summary)}` : '',
+    alarmDays ? 'END:VALARM' : '',
+    'END:VEVENT'
+  ].filter(Boolean).join('\r\n');
+
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//LunaSync//Cycle Calendar//ES',
+    'CALSCALE:GREGORIAN',
+    event('periodo', 'LunaSync: menstruación estimada', next, periodEnd, 'Predicción basada en tu ciclo registrado.', 2),
+    event('fertil', 'LunaSync: ventana fértil estimada', fertileStart, fertileEnd, 'Ventana fértil aproximada según tu duración de ciclo.'),
+    event('ovulacion', 'LunaSync: ovulación estimada', ovulation, addDays(ovulation, 1), 'Ovulación aproximada. No usar como método anticonceptivo único.'),
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  downloadTextFile(`lunasync-calendario-${TODAY_STR}.ics`, ics, 'text/calendar;charset=utf-8');
+  showToast('Calendario exportado');
+}
+
 // ============ PROFILE ============
 function loadProfile() {
   document.getElementById('profileName').value = state.name || '';
@@ -1495,6 +1639,7 @@ function loadProfile() {
   document.getElementById('profileDob').value = state.dob || '';
   document.getElementById('profileGoal').value = state.goal || 'salud';
   document.getElementById('profileGroqKey').value = state.groqKey || '';
+  document.getElementById('profileAiConsent').checked = !!state.aiConsent;
   updateGroqStatus();
 }
 
@@ -1525,6 +1670,7 @@ function saveProfile() {
   state.dob = document.getElementById('profileDob').value;
   state.goal = document.getElementById('profileGoal').value;
   state.groqKey = groqKey;
+  state.aiConsent = document.getElementById('profileAiConsent').checked;
   saveState();
   renderHome();
   updateGroqStatus();
@@ -1548,16 +1694,19 @@ function exportData() {
     exportedAt: new Date().toISOString(),
     data: state
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `lunasync-datos-${TODAY_STR}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  downloadTextFile(
+    `lunasync-datos-${TODAY_STR}.json`,
+    JSON.stringify(payload, null, 2),
+    'application/json;charset=utf-8'
+  );
   showToast('Datos exportados');
+}
+
+function resetData() {
+  const ok = confirm('¿Borrar todos tus datos de LunaSync en este dispositivo? Esta acción no se puede deshacer.');
+  if (!ok) return;
+  localStorage.removeItem('lunasync');
+  location.reload();
 }
 
 // ============ AI CHAT ============
@@ -1631,6 +1780,13 @@ async function sendMessage() {
     return;
   }
 
+  if (!state.aiConsent) {
+    typingEl.remove();
+    addChatMsg('Activa el permiso de Luna AI en Perfil para enviar tu contexto de ciclo a Groq solo cuando uses el chat.', 'luna');
+    document.getElementById('sendBtn').disabled = false;
+    return;
+  }
+
   try {
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -1686,6 +1842,50 @@ function sendQuickQ(btn) {
 function autoResize(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ============ PWA ============
+function createPwaIcon(size) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, size, size);
+  gradient.addColorStop(0, '#E8637A');
+  gradient.addColorStop(1, '#B8A9C9');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.beginPath();
+  ctx.arc(size * 0.54, size * 0.48, size * 0.28, 0.4 * Math.PI, 1.65 * Math.PI);
+  ctx.arc(size * 0.66, size * 0.39, size * 0.23, 1.65 * Math.PI, 0.4 * Math.PI, true);
+  ctx.closePath();
+  ctx.fill();
+  ctx.font = `${Math.round(size * 0.16)}px "Playfair Display", serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('LS', size / 2, size * 0.78);
+  return canvas.toDataURL('image/png');
+}
+
+function initPwa() {
+  const manifest = {
+    name: 'LunaSync',
+    short_name: 'LunaSync',
+    description: 'Seguimiento privado de ciclo menstrual con Luna AI.',
+    start_url: '.',
+    display: 'standalone',
+    background_color: '#FDF6F0',
+    theme_color: '#E8637A',
+    icons: [
+      { src: createPwaIcon(192), sizes: '192x192', type: 'image/png' },
+      { src: createPwaIcon(512), sizes: '512x512', type: 'image/png' }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = URL.createObjectURL(blob);
+  document.head.appendChild(link);
 }
 
 // ============ ONBOARDING ============
@@ -1799,6 +1999,7 @@ function showScreen(name, navBtn) {
 }
 
 // ============ INIT ============
+initPwa();
 renderHome();
 initOnboarding();
 </script>
