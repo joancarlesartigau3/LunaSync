@@ -1013,7 +1013,7 @@
     </div>
 
     <div class="onboarding-actions">
-      <button class="onboarding-back" id="onboardingBack" onclick="prevOnboardingStep()" disabled>‹</button>
+      <button class="onboarding-back" id="onboardingBack" onclick="prevOnboardingStep()">‹</button>
       <button class="save-btn" id="onboardingNext" onclick="nextOnboardingStep()">Continuar</button>
     </div>
   </div>
@@ -1442,7 +1442,7 @@ const I18N = {
   es: {
     appTitle: 'LunaSync — Tu ciclo, tu ritmo', manifestDescription: 'Seguimiento privado de ciclo menstrual con Luna AI.', navHoy: 'Hoy', navCiclo: 'Ciclo', navLuna: 'Luna AI', navPerfil: 'Perfil',
     onboardingCopy: ['Vamos a configurar tu ciclo en menos de un minuto.', 'Si no lo sabes exacto, 28 días es una buena base para empezar.', 'Con esta fecha LunaSync calculará tu fase actual y próximas predicciones.'],
-    onboardingNameLabel: '¿Cómo te llamas?', onboardingNamePlaceholder: 'Tu nombre', onboardingCycleLabel: 'Duración media de tu ciclo', onboardingPeriodLabel: 'Primer día de tu último periodo', onboardingNext: 'Continuar', onboardingStart: 'Empezar',
+    onboardingNameLabel: '¿Cómo te llamas?', onboardingNamePlaceholder: 'Tu nombre', onboardingCycleLabel: 'Duración media de tu ciclo', onboardingPeriodLabel: 'Primer día de tu último periodo', onboardingNext: 'Continuar', onboardingStart: 'Empezar', toastLanguageChanged: 'Idioma cambiado',
     profileTitle: '👤 Tu perfil', profileLanguageLabel: 'Idioma', profileNameLabel: 'Nombre', profileNamePlaceholder: 'Tu nombre', profileNameHint: 'Se usa para personalizar Luna AI y tus resúmenes.', profileCycleLabel: 'Duración media del ciclo (días)', profilePeriodLabel: 'Duración media del periodo (días)', profileDobLabel: 'Fecha de nacimiento', profileGoalLabel: 'Objetivo',
     goalHealth: 'Salud general', goalPregnancy: 'Buscar embarazo', goalContraception: 'Anticoncepción natural', goalPms: 'Gestionar SPM',
     profileSaveBtn: 'Guardar perfil', privacyTitle: '🔒 Privacidad', privacyCopy: 'Tus registros se guardan <strong>únicamente en este dispositivo</strong>. LunaSync no comparte ni vende tu información. Si activas Luna AI, solo entonces se envía a Groq el contexto necesario para responder al chat.', exportDataBtn: 'Exportar mis datos', resetDataBtn: 'Borrar todos mis datos',
@@ -1473,7 +1473,7 @@ const I18N = {
   ca: {
     appTitle: 'LunaSync — El teu cicle, el teu ritme', manifestDescription: 'Seguiment privat del cicle menstrual amb Luna AI.', navHoy: 'Avui', navCiclo: 'Cicle', navLuna: 'Luna AI', navPerfil: 'Perfil',
     onboardingCopy: ['Configurarem el teu cicle en menys d’un minut.', 'Si no ho saps exacte, 28 dies és una bona base per començar.', 'Amb aquesta data LunaSync calcularà la fase actual i les properes prediccions.'],
-    onboardingNameLabel: 'Com et dius?', onboardingNamePlaceholder: 'El teu nom', onboardingCycleLabel: 'Durada mitjana del teu cicle', onboardingPeriodLabel: 'Primer dia de la teva última regla', onboardingNext: 'Continuar', onboardingStart: 'Començar',
+    onboardingNameLabel: 'Com et dius?', onboardingNamePlaceholder: 'El teu nom', onboardingCycleLabel: 'Durada mitjana del teu cicle', onboardingPeriodLabel: 'Primer dia de la teva última regla', onboardingNext: 'Continuar', onboardingStart: 'Començar', toastLanguageChanged: 'Idioma canviat',
     profileTitle: '👤 El teu perfil', profileLanguageLabel: 'Idioma', profileNameLabel: 'Nom', profileNamePlaceholder: 'El teu nom', profileNameHint: 'S’utilitza per personalitzar Luna AI i els teus resums.', profileCycleLabel: 'Durada mitjana del cicle (dies)', profilePeriodLabel: 'Durada mitjana de la regla (dies)', profileDobLabel: 'Data de naixement', profileGoalLabel: 'Objectiu',
     goalHealth: 'Salut general', goalPregnancy: 'Buscar embaràs', goalContraception: 'Anticoncepció natural', goalPms: 'Gestionar SPM',
     profileSaveBtn: 'Desar perfil', privacyTitle: '🔒 Privacitat', privacyCopy: 'Els teus registres es guarden <strong>només en aquest dispositiu</strong>. LunaSync no comparteix ni ven la teva informació. Si actives Luna AI, només llavors s’envia a Groq el context necessari per respondre al xat.', exportDataBtn: 'Exportar les meves dades', resetDataBtn: 'Esborrar totes les dades',
@@ -1504,7 +1504,7 @@ const I18N = {
   en: {
     appTitle: 'LunaSync — Your cycle, your rhythm', manifestDescription: 'Private menstrual cycle tracking with Luna AI.', navHoy: 'Today', navCiclo: 'Cycle', navLuna: 'Luna AI', navPerfil: 'Profile',
     onboardingCopy: ['Let’s set up your cycle in under a minute.', 'If you are not sure, 28 days is a good starting point.', 'With this date LunaSync will calculate your current phase and upcoming predictions.'],
-    onboardingNameLabel: 'What is your name?', onboardingNamePlaceholder: 'Your name', onboardingCycleLabel: 'Average cycle length', onboardingPeriodLabel: 'First day of your last period', onboardingNext: 'Continue', onboardingStart: 'Start',
+    onboardingNameLabel: 'What is your name?', onboardingNamePlaceholder: 'Your name', onboardingCycleLabel: 'Average cycle length', onboardingPeriodLabel: 'First day of your last period', onboardingNext: 'Continue', onboardingStart: 'Start', toastLanguageChanged: 'Language changed',
     profileTitle: '👤 Your profile', profileLanguageLabel: 'Language', profileNameLabel: 'Name', profileNamePlaceholder: 'Your name', profileNameHint: 'Used to personalize Luna AI and your summaries.', profileCycleLabel: 'Average cycle length (days)', profilePeriodLabel: 'Average period length (days)', profileDobLabel: 'Date of birth', profileGoalLabel: 'Goal',
     goalHealth: 'General health', goalPregnancy: 'Trying to conceive', goalContraception: 'Natural contraception', goalPms: 'Manage PMS',
     profileSaveBtn: 'Save profile', privacyTitle: '🔒 Privacy', privacyCopy: 'Your logs are stored <strong>only on this device</strong>. LunaSync does not share or sell your information. If you enable Luna AI, only then is the cycle context needed for chat sent to Groq.', exportDataBtn: 'Export my data', resetDataBtn: 'Delete all my data',
@@ -1828,12 +1828,21 @@ function setLanguage(lang) {
   initOnboarding();
 }
 
+function showLanguageGateFromOnboarding() {
+  state.language = '';
+  saveState();
+  onboardingStep = 0;
+  document.getElementById('onboarding').classList.remove('active');
+  document.getElementById('languageGate').classList.add('active');
+  document.querySelector('.nav').style.display = 'none';
+}
+
 function changeLanguageFromProfile() {
   const language = document.getElementById('profileLanguage').value || getLang();
   state.language = language;
   saveState();
   applyLanguage();
-  showToast(t('toastSaved'));
+  showToast(t('toastLanguageChanged'));
 }
 
 // ============ CYCLE LOGIC ============
@@ -2528,7 +2537,6 @@ function renderOnboardingStep() {
   });
 
   document.getElementById('onboardingCopy').textContent = copy[onboardingStep];
-  document.getElementById('onboardingBack').disabled = onboardingStep === 0;
   document.getElementById('onboardingNext').textContent = onboardingStep === 2
     ? t('onboardingStart')
     : t('onboardingNext');
@@ -2563,7 +2571,10 @@ function nextOnboardingStep() {
 }
 
 function prevOnboardingStep() {
-  if (onboardingStep === 0) return;
+  if (onboardingStep === 0) {
+    showLanguageGateFromOnboarding();
+    return;
+  }
   onboardingStep -= 1;
   renderOnboardingStep();
 }
