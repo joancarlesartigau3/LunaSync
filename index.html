@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LunaSync — Tu ciclo, tu ritmo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose: #E8637A;
+    --blush: #F4A5B0;
+    --cream: #FDF6F0;
+    --sand: #F0E4D4;
+    --sage: #8BAF8E;
+    --lavender: #B8A9C9;
+    --gold: #D4A853;
+    --ink: #2D2321;
+    --mist: #F7F0F4;
+    
+    --phase-menstrual: #E8637A;
+    --phase-folicular: #8BAF8E;
+    --phase-ovulatoria: #D4A853;
+    --phase-lutea: #B8A9C9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(232,99,122,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(184,169,201,0.1) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 50%, rgba(212,168,83,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    padding-bottom: 90px;
+  }
+
+  /* Header */
+  .header {
+    padding: 32px 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--rose);
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { font-style: italic; color: var(--ink); }
+
+  .header-date {
+    font-size: 13px;
+    color: #999;
+    text-align: right;
+  }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: rgba(253,246,240,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(232,99,122,0.1);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 8px 20px;
+    z-index: 100;
+  }
+
+  .nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 12px;
+    transition: all 0.2s;
+    color: #bbb;
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .nav-btn.active { color: var(--rose); }
+  .nav-btn.active .nav-icon { background: rgba(232,99,122,0.12); }
+
+  .nav-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.2s;
+  }
+
+  /* Screens */
+  .screen { display: none; padding: 0 20px; animation: fadeIn 0.3s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Phase Ring */
+  .phase-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 28px;
+  }
+
+  .phase-ring-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin-bottom: 20px;
+  }
+
+  .phase-ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .phase-ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .day-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .day-label {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .phase-name-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .phase-description {
+    font-size: 13px;
+    color: #888;
+    text-align: center;
+    max-width: 260px;
+    line-height: 1.6;
+  }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 20px rgba(45,35,33,0.06);
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Recommendations grid */
+  .reco-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .reco-item {
+    background: var(--mist);
+    border-radius: 14px;
+    padding: 14px;
+  }
+
+  .reco-emoji { font-size: 22px; margin-bottom: 6px; }
+  .reco-cat {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #aaa;
+    margin-bottom: 4px;
+  }
+  .reco-text { font-size: 13px; line-height: 1.4; color: var(--ink); }
+
+  /* Symptoms */
+  .symptom-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .symptom-chip {
+    padding: 8px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    border: 1.5px solid #E8E0DC;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .symptom-chip:hover { border-color: var(--rose); }
+  .symptom-chip.selected {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: white;
+  }
+
+  /* Flow selector */
+  .flow-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .flow-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border-radius: 12px;
+    border: 1.5px solid #E8E0DC;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    font-size: 12px;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .flow-btn.selected {
+    border-color: var(--rose);
+    background: rgba(232,99,122,0.08);
+    color: var(--rose);
+    font-weight: 500;
+  }
+
+  .flow-emoji { font-size: 18px; display: block; margin-bottom: 3px; }
+
+  /* Calendar */
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+  }
+
+  .cal-day-header {
+    text-align: center;
+    font-size: 11px;
+    color: #bbb;
+    padding: 4px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .cal-day:hover { background: var(--mist); }
+  .cal-day.today { font-weight: 700; color: var(--rose); }
+  .cal-day.today::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--rose);
+  }
+
+  .cal-day.period { background: rgba(232,99,122,0.2); color: var(--rose); font-weight: 500; }
+  .cal-day.ovulation { background: rgba(212,168,83,0.25); color: #b8863a; }
+  .cal-day.fertile { background: rgba(139,175,142,0.2); color: #5a8a5e; }
+  .cal-day.predicted { background: rgba(232,99,122,0.08); border: 1.5px dashed rgba(232,99,122,0.4); }
+
+  .cal-legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #888;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  /* Period button */
+  .period-toggle-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: none;
+    background: var(--rose);
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .period-toggle-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+  .period-toggle-btn.active { background: var(--ink); }
+
+  /* AI Chat */
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 4px 0;
+    margin-bottom: 16px;
+  }
+
+  .chat-msg {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .chat-msg.user {
+    background: var(--rose);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-msg.luna {
+    background: white;
+    color: var(--ink);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .chat-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .chat-input {
+    flex: 1;
+    padding: 13px 16px;
+    border-radius: 16px;
+    border: 1.5px solid #E8E0DC;
+    background: white;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    resize: none;
+    outline: none;
+    transition: border-color 0.15s;
+    max-height: 100px;
+  }
+
+  .chat-input:focus { border-color: var(--rose); }
+
+  .chat-send-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    border: none;
+    background: var(--rose);
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .chat-send-btn:hover { opacity: 0.88; }
+  .chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .chat-typing {
+    display: flex;
+    gap: 4px;
+    padding: 14px 16px;
+    background: white;
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .typing-dot {
+    width: 6px; height: 6px;
+    background: #ccc;
+    border-radius: 50%;
+    animation: typingBounce 1.2s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+
+  /* Profile */
+  .profile-field {
+    margin-bottom: 16px;
+  }
+  .profile-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+  .profile-input {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 14px;
+    border: 1.5px solid #E8E0DC;
+    background: white;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .profile-input:focus { border-color: var(--rose); }
+
+  .save-btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    border: none;
+    background: var(--rose);
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+
+  .save-btn:hover { opacity: 0.9; }
+
+  /* Stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-box {
+    background: white;
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--rose);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Mood log */
+  .mood-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .mood-btn {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1.5px solid #E8E0DC;
+    background: white;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.15s;
+  }
+
+  .mood-btn.selected {
+    border-color: var(--gold);
+    background: rgba(212,168,83,0.1);
+    transform: scale(1.1);
+  }
+
+  /* Sections */
+  .section-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #bbb;
+    margin-bottom: 10px;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: var(--ink);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    z-index: 999;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(232,99,122,0.3); border-radius: 4px; }
+
+  .empty-chat {
+    text-align: center;
+    padding: 20px;
+    color: #ccc;
+    font-size: 14px;
+  }
+
+  .quick-questions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .quick-q {
+    padding: 8px 14px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(232,99,122,0.3);
+    background: rgba(232,99,122,0.05);
+    font-size: 12px;
+    color: var(--rose);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .quick-q:hover { background: rgba(232,99,122,0.12); }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="header">
+    <div class="logo">Luna<span>Sync</span></div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+
+  <!-- SCREEN: HOY -->
+  <div class="screen active" id="screen-hoy">
+    <div class="phase-hero">
+      <div class="phase-ring-container">
+        <svg class="phase-ring-svg" viewBox="0 0 220 220">
+          <!-- Background track -->
+          <circle cx="110" cy="110" r="90" fill="none" stroke="#F0E4D4" stroke-width="14"/>
+          <!-- Phase arc -->
+          <circle id="phaseArc" cx="110" cy="110" r="90" fill="none" 
+            stroke="#E8637A" stroke-width="14" stroke-linecap="round"
+            stroke-dasharray="565.5" stroke-dashoffset="282"/>
+          <!-- Inner decorative ring -->
+          <circle cx="110" cy="110" r="74" fill="none" stroke="#F7F0F4" stroke-width="1"/>
+        </svg>
+        <div class="phase-ring-center">
+          <div class="day-number" id="cycleDay">—</div>
+          <div class="day-label">Día del ciclo</div>
+        </div>
+      </div>
+
+      <div class="phase-name-badge" id="phaseBadge">Sin datos</div>
+      <div class="phase-description" id="phaseDesc">Registra tu periodo para comenzar el seguimiento</div>
+    </div>
+
+    <!-- Botón periodo -->
+    <button class="period-toggle-btn" id="periodToggleBtn" onclick="togglePeriod()">
+      🩸 <span id="periodBtnText">Registrar inicio de periodo</span>
+    </button>
+
+    <!-- Recomendaciones de hoy -->
+    <div class="card" id="recoCard">
+      <div class="card-title">✨ Recomendaciones de hoy</div>
+      <div class="reco-grid" id="recoGrid">
+        <div class="reco-item">
+          <div class="reco-emoji">🌿</div>
+          <div class="reco-cat">Ejercicio</div>
+          <div class="reco-text">Registra tu periodo para ver recomendaciones personalizadas</div>
+        </div>
+        <div class="reco-item">
+          <div class="reco-emoji">🥗</div>
+          <div class="reco-cat">Nutrición</div>
+          <div class="reco-text">Basadas en tu fase del ciclo</div>
+        </div>
+        <div class="reco-item">
+          <div class="reco-emoji">🧠</div>
+          <div class="reco-cat">Energía</div>
+          <div class="reco-text">Optimiza tu día según tus hormonas</div>
+        </div>
+        <div class="reco-item">
+          <div class="reco-emoji">💆</div>
+          <div class="reco-cat">Bienestar</div>
+          <div class="reco-text">Tips de autocuidado personalizados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log de hoy -->
+    <div class="card">
+      <div class="card-title">📝 Registro de hoy</div>
+      
+      <div class="section-label">¿Cómo te encuentras?</div>
+      <div class="mood-grid" id="moodGrid">
+        <button class="mood-btn" onclick="selectMood(this, '😴')">😴</button>
+        <button class="mood-btn" onclick="selectMood(this, '😔')">😔</button>
+        <button class="mood-btn" onclick="selectMood(this, '😐')">😐</button>
+        <button class="mood-btn" onclick="selectMood(this, '😊')">😊</button>
+        <button class="mood-btn" onclick="selectMood(this, '🤩')">🤩</button>
+        <button class="mood-btn" onclick="selectMood(this, '😤')">😤</button>
+        <button class="mood-btn" onclick="selectMood(this, '😭')">😭</button>
+        <button class="mood-btn" onclick="selectMood(this, '🥰')">🥰</button>
+      </div>
+
+      <div class="section-label" style="margin-top:16px">Síntomas</div>
+      <div class="symptom-grid" id="symptomGrid"></div>
+
+      <button class="save-btn" onclick="saveLog()" style="margin-top:16px">Guardar registro</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: CICLO (Calendar) -->
+  <div class="screen" id="screen-ciclo">
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value" id="statDuration">—</div>
+        <div class="stat-label">Duración ciclo</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statPeriod">—</div>
+        <div class="stat-label">Días regla</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statNext">—</div>
+        <div class="stat-label">Próxima regla</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <button onclick="prevMonth()" style="background:none;border:none;cursor:pointer;font-size:18px;color:#888">‹</button>
+        <div class="card-title" style="margin:0" id="calMonth">Abril 2026</div>
+        <button onclick="nextMonth()" style="background:none;border:none;cursor:pointer;font-size:18px;color:#888">›</button>
+      </div>
+
+      <div class="calendar-grid" id="calGrid"></div>
+
+      <div class="cal-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:rgba(232,99,122,0.4)"></div>
+          Periodo
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:rgba(212,168,83,0.4)"></div>
+          Ovulación
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:rgba(139,175,142,0.35)"></div>
+          Fértil
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="border:1.5px dashed rgba(232,99,122,0.5);background:transparent"></div>
+          Predicción
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔮 Próximos eventos</div>
+      <div id="upcomingEvents" style="font-size:14px;color:#888;line-height:2">
+        Registra tu ciclo para ver predicciones
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: LUNA (AI Chat) -->
+  <div class="screen" id="screen-luna">
+    <div class="card" style="margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0">
+      <div class="card-title">🌙 Habla con Luna</div>
+      <div style="font-size:13px;color:#aaa;margin-top:-8px;margin-bottom:12px">Tu asistente de ciclo con IA</div>
+      
+      <div class="quick-questions" id="quickQuestions">
+        <button class="quick-q" onclick="sendQuickQ(this)">¿Por qué tengo acné ahora?</button>
+        <button class="quick-q" onclick="sendQuickQ(this)">¿Qué comer hoy?</button>
+        <button class="quick-q" onclick="sendQuickQ(this)">Tengo muchos calambres</button>
+        <button class="quick-q" onclick="sendQuickQ(this)">¿Cuándo es mi ventana fértil?</button>
+        <button class="quick-q" onclick="sendQuickQ(this)">Me siento muy irritable</button>
+        <button class="quick-q" onclick="sendQuickQ(this)">Ejercicio para hoy</button>
+      </div>
+
+      <div class="chat-container" id="chatContainer">
+        <div class="empty-chat">
+          Pregúntame cualquier cosa sobre tu ciclo 🌸
+        </div>
+      </div>
+    </div>
+
+    <div style="background:white;padding:16px;border-radius:0 0 20px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" rows="1" placeholder="Escribe tu pregunta..." 
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+          oninput="autoResize(this)"></textarea>
+        <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: PERFIL -->
+  <div class="screen" id="screen-perfil">
+    <div class="card">
+      <div class="card-title">👤 Tu perfil</div>
+      
+      <div class="profile-field">
+        <div class="profile-label">Nombre</div>
+        <input class="profile-input" id="profileName" type="text" placeholder="Tu nombre">
+      </div>
+
+      <div class="profile-field">
+        <div class="profile-label">Duración media del ciclo (días)</div>
+        <input class="profile-input" id="profileCycleLen" type="number" min="21" max="45" value="28">
+      </div>
+
+      <div class="profile-field">
+        <div class="profile-label">Duración media del periodo (días)</div>
+        <input class="profile-input" id="profilePeriodLen" type="number" min="2" max="10" value="5">
+      </div>
+
+      <div class="profile-field">
+        <div class="profile-label">Fecha de nacimiento</div>
+        <input class="profile-input" id="profileDob" type="date">
+      </div>
+
+      <div class="profile-field">
+        <div class="profile-label">Objetivo</div>
+        <select class="profile-input" id="profileGoal">
+          <option value="salud">Salud general</option>
+          <option value="embarazo">Buscar embarazo</option>
+          <option value="anticoncepcion">Anticoncepción natural</option>
+          <option value="spm">Gestionar SPM</option>
+        </select>
+      </div>
+
+      <div class="profile-field">
+        <div class="profile-label">🔑 Groq API Key <span style="color:#E8637A;font-size:11px">(gratis en console.groq.com)</span></div>
+        <input class="profile-input" id="profileGroqKey" type="password" placeholder="gsk_...">
+      </div>
+
+      <button class="save-btn" onclick="saveProfile()">Guardar perfil</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔒 Privacidad</div>
+      <div style="font-size:14px;color:#888;line-height:1.6">
+        Todos tus datos se guardan <strong>únicamente en este dispositivo</strong>. 
+        No compartimos ni vendemos tu información. 
+        LunaSync funciona 100% offline.
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:30px">
+      <div class="card-title">⚠️ Aviso médico</div>
+      <div style="font-size:13px;color:#aaa;line-height:1.6">
+        LunaSync es una herramienta de seguimiento personal y no sustituye el consejo médico profesional. 
+        Consulta siempre con tu ginecóloga o médica para cualquier preocupación de salud.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showScreen('hoy', this)">
+    <div class="nav-icon">🌸</div>
+    Hoy
+  </button>
+  <button class="nav-btn" onclick="showScreen('ciclo', this)">
+    <div class="nav-icon">📅</div>
+    Ciclo
+  </button>
+  <button class="nav-btn" onclick="showScreen('luna', this)">
+    <div class="nav-icon">🌙</div>
+    Luna AI
+  </button>
+  <button class="nav-btn" onclick="showScreen('perfil', this)">
+    <div class="nav-icon">👤</div>
+    Perfil
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ STATE ============
+let state = JSON.parse(localStorage.getItem('lunasync') || '{}');
+
+// Defaults
+if (!state.cycleLength) state.cycleLength = 28;
+if (!state.periodLength) state.periodLength = 5;
+if (!state.periodDays) state.periodDays = []; // array of "YYYY-MM-DD"
+if (!state.logs) state.logs = {}; // date -> {mood, symptoms, flow}
+if (!state.name) state.name = '';
+
+let calViewDate = new Date();
+let chatHistory = [];
+const TODAY = new Date();
+const TODAY_STR = formatDate(TODAY);
+
+// ============ SYMPTOMS ============
+const SYMPTOMS = [
+  {e:'🤕',l:'Cabeza'},{e:'🫃',l:'Hinchazón'},{e:'😫',l:'Calambres'},
+  {e:'💤',l:'Cansancio'},{e:'🤢',l:'Náuseas'},{e:'🌊',l:'Retención agua'},
+  {e:'🔥',l:'Acné'},{e:'💪',l:'Energía alta'},{e:'🍫',l:'Antojos'},
+  {e:'😰',l:'Ansiedad'},{e:'❄️',l:'Sensibilidad'},
+  {e:'🦋',l:'Libido alta'},{e:'🌧',l:'Bajón de ánimo'},{e:'✨',l:'Piel radiante'},
+];
+
+// ============ PHASES ============
+const PHASES = {
+  menstrual: {
+    name: 'Fase Menstrual',
+    color: '#E8637A',
+    desc: 'Tu cuerpo se renueva. Descansa y cuídate con amor.',
+    recos: [
+      {e:'🧘',cat:'Ejercicio',txt:'Yoga restaurativo o caminata suave. Evita el HIIT si hay calambres.'},
+      {e:'🫐',cat:'Nutrición',txt:'Hierro (espinacas, lentejas), omega-3 y chocolate negro para calambres.'},
+      {e:'🕯️',cat:'Energía',txt:'Día de descanso y reflexión. Evita decisiones importantes.'},
+      {e:'🛁',cat:'Bienestar',txt:'Baño caliente con sales, bolsa de agua caliente y magnesio.'},
+    ]
+  },
+  folicular: {
+    name: 'Fase Folicular',
+    color: '#8BAF8E',
+    desc: 'Tu energía resurge. Es momento de nuevos comienzos.',
+    recos: [
+      {e:'🏋️',cat:'Ejercicio',txt:'Cardio moderado, pesas, prueba nuevas rutinas. Alta capacidad de recuperación.'},
+      {e:'🥦',cat:'Nutrición',txt:'Proteínas magras, vegetales frescos y carbohidratos complejos para energía.'},
+      {e:'🎨',cat:'Energía',txt:'Ideal para proyectos creativos, nuevos aprendizajes y socializar.'},
+      {e:'🌱',cat:'Bienestar',txt:'Establece metas, planifica y conecta con amigas. Tu ánimo está en alza.'},
+    ]
+  },
+  ovulatoria: {
+    name: 'Fase Ovulatoria',
+    color: '#D4A853',
+    desc: 'Estás en tu pico. Brilla, conecta y aprovecha tu energía máxima.',
+    recos: [
+      {e:'🏃',cat:'Ejercicio',txt:'HIIT, running, deportes intensos, levantamiento pesado. Máxima fuerza.'},
+      {e:'🫐',cat:'Nutrición',txt:'Alimentos ligeros, hidratantes, zinc y antioxidantes (frutos rojos, semillas).'},
+      {e:'💼',cat:'Energía',txt:'Presentaciones, networking, conversaciones difíciles. Tu confianza es máxima.'},
+      {e:'✨',cat:'Bienestar',txt:'Tu piel brilla. Exprésate, conecta y disfruta tu energía más alta del ciclo.'},
+    ]
+  },
+  lutea: {
+    name: 'Fase Lútea',
+    color: '#B8A9C9',
+    desc: 'Desacelerando con gracia. Escucha a tu cuerpo y cuídate.',
+    recos: [
+      {e:'🚶',cat:'Ejercicio',txt:'Yoga, caminatas, pilates moderado. Evita sobreentrenamiento si tienes SPM.'},
+      {e:'🥑',cat:'Nutrición',txt:'Proteínas, grasas saludables (aguacate, nueces), reduce sal y cafeína. Magnesio y B6.'},
+      {e:'📝',cat:'Energía',txt:'Planificación ligera, tareas de detalle. No el momento para grandes decisiones.'},
+      {e:'🫶',cat:'Bienestar',txt:'Técnicas de respiración, meditación, baños relajantes. Sé amable contigo misma.'},
+    ]
+  }
+};
+
+// ============ HELPERS ============
+function formatDate(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function addDays(dateStr, n) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + n);
+  return formatDate(d);
+}
+
+function daysDiff(a, b) {
+  return Math.round((new Date(b) - new Date(a)) / 86400000);
+}
+
+function saveState() {
+  localStorage.setItem('lunasync', JSON.stringify(state));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============ CYCLE LOGIC ============
+function getLastPeriodStart() {
+  if (!state.periodDays.length) return null;
+  const sorted = [...state.periodDays].sort();
+  // Find groups of consecutive days
+  let groups = [];
+  let group = [sorted[0]];
+  for (let i = 1; i < sorted.length; i++) {
+    if (daysDiff(sorted[i-1], sorted[i]) <= 2) {
+      group.push(sorted[i]);
+    } else {
+      groups.push(group);
+      group = [sorted[i]];
+    }
+  }
+  groups.push(group);
+  // Return start of last group
+  return groups[groups.length - 1][0];
+}
+
+function getCycleDay() {
+  const last = getLastPeriodStart();
+  if (!last) return null;
+  const diff = daysDiff(last, TODAY_STR);
+  return diff + 1;
+}
+
+function getCurrentPhase(cycleDay) {
+  if (!cycleDay) return null;
+  const cl = state.cycleLength;
+  const pl = state.periodLength;
+  const ovDay = Math.round(cl - 14);
+  
+  if (cycleDay <= pl) return 'menstrual';
+  if (cycleDay <= ovDay - 1) return 'folicular';
+  if (cycleDay <= ovDay + 1) return 'ovulatoria';
+  return 'lutea';
+}
+
+function getNextPeriodDate() {
+  const last = getLastPeriodStart();
+  if (!last) return null;
+  return addDays(last, state.cycleLength);
+}
+
+function getDayType(dateStr) {
+  const last = getLastPeriodStart();
+  if (!last) return null;
+
+  // Is it a logged period day?
+  if (state.periodDays.includes(dateStr)) return 'period';
+
+  const diff = daysDiff(last, dateStr);
+  const cl = state.cycleLength;
+  const pl = state.periodLength;
+  const ovDay = Math.round(cl - 14);
+
+  // Future predictions
+  if (diff >= cl && diff < cl + pl) return 'predicted';
+  if (diff >= cl + ovDay - 3 && diff < cl + ovDay + 2) return 'fertile';
+  if (diff >= cl + ovDay - 1 && diff <= cl + ovDay + 1) return 'ovulation';
+
+  // Past cycle ovulation/fertile
+  const cycleDay = diff + 1;
+  if (cycleDay >= ovDay - 3 && cycleDay <= ovDay + 1) return 'fertile';
+  if (cycleDay >= ovDay - 1 && cycleDay <= ovDay + 1) return 'ovulation';
+
+  return null;
+}
+
+// ============ RENDER HOME ============
+function renderHome() {
+  const cycleDay = getCycleDay();
+  const phase = getCurrentPhase(cycleDay);
+  const el = document.getElementById;
+
+  // Update date header
+  const opts = { weekday: 'long', day: 'numeric', month: 'long' };
+  document.getElementById('headerDate').innerHTML = 
+    TODAY.toLocaleDateString('es-ES', opts).replace(',','<br>');
+
+  // Cycle day ring
+  if (cycleDay) {
+    document.getElementById('cycleDay').textContent = cycleDay;
+    const cl = state.cycleLength;
+    const progress = Math.min(cycleDay / cl, 1);
+    const circumference = 2 * Math.PI * 90;
+    const offset = circumference - (progress * circumference);
+    const arc = document.getElementById('phaseArc');
+    arc.style.strokeDashoffset = offset;
+    arc.style.stroke = PHASES[phase]?.color || '#E8637A';
+  }
+
+  // Phase badge
+  const badge = document.getElementById('phaseBadge');
+  if (phase) {
+    badge.textContent = PHASES[phase].name;
+    badge.style.background = PHASES[phase].color;
+    document.getElementById('phaseDesc').textContent = PHASES[phase].desc;
+  } else {
+    badge.style.background = '#ddd';
+  }
+
+  // Period button
+  const isPeriodToday = state.periodDays.includes(TODAY_STR);
+  const btn = document.getElementById('periodToggleBtn');
+  document.getElementById('periodBtnText').textContent = isPeriodToday
+    ? 'Periodo activo hoy (toca para quitar)'
+    : 'Registrar inicio de periodo';
+  btn.classList.toggle('active', isPeriodToday);
+
+  // Recommendations
+  if (phase) {
+    const grid = document.getElementById('recoGrid');
+    grid.innerHTML = PHASES[phase].recos.map(r => `
+      <div class="reco-item">
+        <div class="reco-emoji">${r.e}</div>
+        <div class="reco-cat">${r.cat}</div>
+        <div class="reco-text">${r.txt}</div>
+      </div>
+    `).join('');
+  }
+
+  // Symptoms
+  const todayLog = state.logs[TODAY_STR] || {};
+  const selectedSymptoms = todayLog.symptoms || [];
+  document.getElementById('symptomGrid').innerHTML = SYMPTOMS.map(s => `
+    <div class="symptom-chip ${selectedSymptoms.includes(s.l) ? 'selected' : ''}" 
+      onclick="toggleSymptom('${s.l}', this)">
+      ${s.e} ${s.l}
+    </div>
+  `).join('');
+
+  // Mood
+  const selectedMood = todayLog.mood || '';
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.toggle('selected', b.textContent.trim() === selectedMood);
+  });
+}
+
+// ============ PERIOD TOGGLE ============
+function togglePeriod() {
+  if (state.periodDays.includes(TODAY_STR)) {
+    state.periodDays = state.periodDays.filter(d => d !== TODAY_STR);
+    showToast('Periodo eliminado de hoy');
+  } else {
+    state.periodDays.push(TODAY_STR);
+    showToast('🩸 Periodo registrado');
+  }
+  saveState();
+  renderHome();
+}
+
+// ============ LOG ============
+function toggleSymptom(name, el) {
+  if (!state.logs[TODAY_STR]) state.logs[TODAY_STR] = {};
+  if (!state.logs[TODAY_STR].symptoms) state.logs[TODAY_STR].symptoms = [];
+  const arr = state.logs[TODAY_STR].symptoms;
+  const idx = arr.indexOf(name);
+  if (idx > -1) arr.splice(idx, 1);
+  else arr.push(name);
+  el.classList.toggle('selected');
+  saveState();
+}
+
+function selectMood(btn, emoji) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (!state.logs[TODAY_STR]) state.logs[TODAY_STR] = {};
+  state.logs[TODAY_STR].mood = emoji;
+  saveState();
+}
+
+function saveLog() {
+  saveState();
+  showToast('✅ Registro guardado');
+}
+
+// ============ CALENDAR ============
+function renderCalendar() {
+  const year = calViewDate.getFullYear();
+  const month = calViewDate.getMonth();
+  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  
+  document.getElementById('calMonth').textContent = `${monthNames[month]} ${year}`;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startOffset = firstDay === 0 ? 6 : firstDay - 1; // Monday start
+
+  let html = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'].map(d => 
+    `<div class="cal-day-header">${d}</div>`).join('');
+
+  // Empty cells
+  for (let i = 0; i < startOffset; i++) html += '<div></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === TODAY_STR;
+    const dayType = getDayType(dateStr);
+    const isPeriod = state.periodDays.includes(dateStr);
+
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    if (isPeriod) cls += ' period';
+    else if (dayType === 'ovulation') cls += ' ovulation';
+    else if (dayType === 'fertile') cls += ' fertile';
+    else if (dayType === 'predicted') cls += ' predicted';
+
+    html += `<div class="${cls}" onclick="calDayClick('${dateStr}')">${d}</div>`;
+  }
+
+  document.getElementById('calGrid').innerHTML = html;
+
+  // Stats
+  const cl = state.cycleLength;
+  const pl = state.periodLength;
+  const next = getNextPeriodDate();
+  const daysUntil = next ? daysDiff(TODAY_STR, next) : null;
+
+  document.getElementById('statDuration').textContent = cl;
+  document.getElementById('statPeriod').textContent = pl;
+  document.getElementById('statNext').textContent = daysUntil !== null 
+    ? (daysUntil === 0 ? 'Hoy' : daysUntil < 0 ? `+${Math.abs(daysUntil)}d` : `${daysUntil}d`) 
+    : '—';
+
+  // Upcoming events
+  if (next) {
+    const ovDay = Math.round(cl - 14);
+    const last = getLastPeriodStart();
+    const nextOv = last ? addDays(last, ovDay - 1) : null;
+    const nextOvFuture = addDays(next, ovDay - 1);
+    const d2 = daysDiff(TODAY_STR, nextOvFuture);
+    
+    document.getElementById('upcomingEvents').innerHTML = `
+      <div>🩸 <strong>Próxima menstruación:</strong> ${next} (en ${Math.max(0, daysUntil)} días)</div>
+      <div>🌟 <strong>Próxima ovulación:</strong> ${nextOvFuture} (en ${Math.max(0, d2)} días)</div>
+      <div>🌿 <strong>Ventana fértil:</strong> ${addDays(next, ovDay-4)} – ${addDays(next, ovDay+1)}</div>
+    `;
+  }
+}
+
+function calDayClick(dateStr) {
+  // Toggle period day
+  if (state.periodDays.includes(dateStr)) {
+    state.periodDays = state.periodDays.filter(d => d !== dateStr);
+  } else {
+    state.periodDays.push(dateStr);
+  }
+  saveState();
+  renderCalendar();
+  renderHome();
+}
+
+function prevMonth() {
+  calViewDate.setMonth(calViewDate.getMonth() - 1);
+  renderCalendar();
+}
+
+function nextMonth() {
+  calViewDate.setMonth(calViewDate.getMonth() + 1);
+  renderCalendar();
+}
+
+// ============ PROFILE ============
+function loadProfile() {
+  document.getElementById('profileName').value = state.name || '';
+  document.getElementById('profileCycleLen').value = state.cycleLength || 28;
+  document.getElementById('profilePeriodLen').value = state.periodLength || 5;
+  document.getElementById('profileDob').value = state.dob || '';
+  document.getElementById('profileGoal').value = state.goal || 'salud';
+  document.getElementById('profileGroqKey').value = state.groqKey || '';
+}
+
+function saveProfile() {
+  state.name = document.getElementById('profileName').value;
+  state.cycleLength = parseInt(document.getElementById('profileCycleLen').value) || 28;
+  state.periodLength = parseInt(document.getElementById('profilePeriodLen').value) || 5;
+  state.dob = document.getElementById('profileDob').value;
+  state.goal = document.getElementById('profileGoal').value;
+  state.groqKey = document.getElementById('profileGroqKey').value.trim();
+  saveState();
+  renderHome();
+  showToast('✅ Perfil guardado');
+}
+
+// ============ AI CHAT ============
+function buildCycleContext() {
+  const cycleDay = getCycleDay();
+  const phase = getCurrentPhase(cycleDay);
+  const todayLog = state.logs[TODAY_STR] || {};
+  const symptoms = todayLog.symptoms?.join(', ') || 'ninguno registrado';
+  const mood = todayLog.mood || 'no registrado';
+  const next = getNextPeriodDate();
+  const daysUntil = next ? daysDiff(TODAY_STR, next) : null;
+
+  return `
+Eres Luna, una asistente empática y experta en salud menstrual femenina de la app LunaSync.
+Responde siempre en español, de forma cálida, concisa y con base científica.
+Añade siempre un pequeño disclaimer recordando que no sustituyes a un médico cuando des consejos de salud.
+
+DATOS ACTUALES DE LA USUARIA:
+- Nombre: ${state.name || 'usuaria'}
+- Día del ciclo: ${cycleDay || 'desconocido'}
+- Fase actual: ${phase ? PHASES[phase].name : 'desconocida'}
+- Duración media del ciclo: ${state.cycleLength} días
+- Duración media del periodo: ${state.periodLength} días
+- Síntomas de hoy: ${symptoms}
+- Estado de ánimo hoy: ${mood}
+- Próxima menstruación en: ${daysUntil !== null ? daysUntil + ' días' : 'desconocido'}
+- Objetivo: ${state.goal || 'salud general'}
+
+Responde de forma personalizada basándote en estos datos cuando sea relevante.
+Sé concisa (máximo 4-5 frases) y usa algún emoji para hacer la respuesta más amigable.
+  `.trim();
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  autoResize(input);
+
+  // Hide quick questions after first message
+  document.getElementById('quickQuestions').style.display = 'none';
+
+  // Clear empty state
+  const container = document.getElementById('chatContainer');
+  const emptyEl = container.querySelector('.empty-chat');
+  if (emptyEl) emptyEl.remove();
+
+  // Add user message
+  addChatMsg(msg, 'user');
+  chatHistory.push({ role: 'user', content: msg });
+
+  // Disable send
+  document.getElementById('sendBtn').disabled = true;
+
+  // Show typing
+  const typingEl = document.createElement('div');
+  typingEl.className = 'chat-typing';
+  typingEl.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  container.appendChild(typingEl);
+  container.scrollTop = container.scrollHeight;
+
+  const groqKey = state.groqKey || '';
+  if (!groqKey) {
+    typingEl.remove();
+    addChatMsg('⚙️ Añade tu Groq API key en el Perfil para activar a Luna. Es gratis en console.groq.com', 'luna');
+    document.getElementById('sendBtn').disabled = false;
+    return;
+  }
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${groqKey}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 1000,
+        messages: [
+          { role: 'system', content: buildCycleContext() },
+          ...chatHistory
+        ]
+      })
+    });
+
+    const data = await res.json();
+    typingEl.remove();
+
+    const reply = data.choices?.[0]?.message?.content || 'Lo siento, no pude procesar tu pregunta. Inténtalo de nuevo.';
+    addChatMsg(reply, 'luna');
+    chatHistory.push({ role: 'assistant', content: reply });
+
+  } catch (err) {
+    typingEl.remove();
+    addChatMsg('Parece que hay un problema de conexión. Revisa tu internet e inténtalo de nuevo. 🌸', 'luna');
+  }
+
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function addChatMsg(text, role) {
+  const container = document.getElementById('chatContainer');
+  const el = document.createElement('div');
+  el.className = `chat-msg ${role}`;
+  el.textContent = text;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendQuickQ(btn) {
+  document.getElementById('chatInput').value = btn.textContent;
+  sendMessage();
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ============ NAVIGATION ============
+function showScreen(name, navBtn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`screen-${name}`).classList.add('active');
+  navBtn.classList.add('active');
+
+  if (name === 'ciclo') renderCalendar();
+  if (name === 'perfil') loadProfile();
+  if (name === 'hoy') renderHome();
+}
+
+// ============ INIT ============
+renderHome();
+</script>
+</body>
+</html>
