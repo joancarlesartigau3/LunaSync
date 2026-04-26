@@ -961,19 +961,19 @@
   <div class="onboarding-card">
     <div class="onboarding-logo">🌙</div>
     <div class="onboarding-title">Luna<span>Sync</span></div>
-    <div class="onboarding-copy">Elige tu idioma para empezar.</div>
+    <div class="onboarding-copy" id="languageGateCopy">Elige tu idioma para empezar.</div>
     <div class="language-options">
       <button class="language-btn" onclick="setLanguage('es')">
         <strong>Español</strong>
-        Ciclo, bienestar y Luna AI en español.
+        <span id="languageEsCopy">Ciclo, bienestar y Luna AI en español.</span>
       </button>
       <button class="language-btn" onclick="setLanguage('ca')">
         <strong>Català</strong>
-        Cicle, benestar i Luna AI en català.
+        <span id="languageCaCopy">Cicle, benestar i Luna AI en català.</span>
       </button>
       <button class="language-btn" onclick="setLanguage('en')">
         <strong>English</strong>
-        Cycle, wellbeing and Luna AI in English.
+        <span id="languageEnCopy">Cycle, wellbeing and Luna AI in English.</span>
       </button>
     </div>
   </div>
@@ -1041,7 +1041,7 @@
         </svg>
         <div class="phase-ring-center">
           <div class="day-number" id="cycleDay">—</div>
-          <div class="day-label">Día del ciclo</div>
+          <div class="day-label" id="cycleDayLabel">Día del ciclo</div>
         </div>
       </div>
 
@@ -1056,7 +1056,7 @@
 
     <!-- Recomendaciones de hoy -->
     <div class="card" id="recoCard">
-      <div class="card-title">✨ Recomendaciones de hoy</div>
+      <div class="card-title" id="recoTitle">✨ Recomendaciones de hoy</div>
       <div class="reco-grid" id="recoGrid">
         <div class="reco-item">
           <div class="reco-emoji">🌿</div>
@@ -1083,9 +1083,9 @@
 
     <!-- Log de hoy -->
     <div class="card">
-      <div class="card-title">📝 Registro de hoy</div>
+      <div class="card-title" id="logTitle">📝 Registro de hoy</div>
       
-      <div class="section-label">¿Cómo te encuentras?</div>
+      <div class="section-label" id="moodLabel">¿Cómo te encuentras?</div>
       <div class="mood-grid" id="moodGrid">
         <button class="mood-btn" onclick="selectMood(this, '😴')">😴</button>
         <button class="mood-btn" onclick="selectMood(this, '😔')">😔</button>
@@ -1097,26 +1097,26 @@
         <button class="mood-btn" onclick="selectMood(this, '🥰')">🥰</button>
       </div>
 
-      <div class="section-label" style="margin-top:16px">Flujo</div>
+      <div class="section-label" id="flowLabel" style="margin-top:16px">Flujo</div>
       <div class="flow-row" id="flowRow">
-        <button class="flow-btn flow-ligero" onclick="selectFlow(this, 'ligero')">
-          <span class="flow-emoji">🩸</span>Ligero
+        <button class="flow-btn flow-ligero" data-flow="ligero" onclick="selectFlow(this, 'ligero')">
+          <span class="flow-emoji">🩸</span><span id="flowLightLabel">Ligero</span>
         </button>
-        <button class="flow-btn flow-normal" onclick="selectFlow(this, 'normal')">
-          <span class="flow-emoji">🩸🩸</span>Normal
+        <button class="flow-btn flow-normal" data-flow="normal" onclick="selectFlow(this, 'normal')">
+          <span class="flow-emoji">🩸🩸</span><span id="flowNormalLabel">Normal</span>
         </button>
-        <button class="flow-btn flow-abundante" onclick="selectFlow(this, 'abundante')">
-          <span class="flow-emoji">🩸🩸🩸</span>Abundante
+        <button class="flow-btn flow-abundante" data-flow="abundante" onclick="selectFlow(this, 'abundante')">
+          <span class="flow-emoji">🩸🩸🩸</span><span id="flowHeavyLabel">Abundante</span>
         </button>
-        <button class="flow-btn flow-muy-abundante" onclick="selectFlow(this, 'muy abundante')">
-          <span class="flow-emoji">🩸🩸🩸🩸</span>Muy abundante
+        <button class="flow-btn flow-muy-abundante" data-flow="muy abundante" onclick="selectFlow(this, 'muy abundante')">
+          <span class="flow-emoji">🩸🩸🩸🩸</span><span id="flowVeryHeavyLabel">Muy abundante</span>
         </button>
       </div>
 
-      <div class="section-label" style="margin-top:16px">Síntomas</div>
+      <div class="section-label" id="symptomsLabel" style="margin-top:16px">Síntomas</div>
       <div class="symptom-grid" id="symptomGrid"></div>
 
-      <button class="save-btn" onclick="saveLog()" style="margin-top:16px">Guardar registro</button>
+      <button class="save-btn" id="saveLogBtn" onclick="saveLog()" style="margin-top:16px">Guardar registro</button>
     </div>
   </div>
 
@@ -1125,15 +1125,15 @@
     <div class="stats-row">
       <div class="stat-box">
         <div class="stat-value" id="statDuration">—</div>
-        <div class="stat-label">Duración ciclo</div>
+        <div class="stat-label" id="statDurationLabel">Duración ciclo</div>
       </div>
       <div class="stat-box">
         <div class="stat-value" id="statPeriod">—</div>
-        <div class="stat-label">Días regla</div>
+        <div class="stat-label" id="statPeriodLabel">Días regla</div>
       </div>
       <div class="stat-box">
         <div class="stat-value" id="statNext">—</div>
-        <div class="stat-label">Próxima regla</div>
+        <div class="stat-label" id="statNextLabel">Próxima regla</div>
       </div>
     </div>
 
@@ -1149,71 +1149,71 @@
       <div class="cal-legend">
         <div class="legend-item">
           <div class="legend-dot" style="background:rgba(232,99,122,0.4)"></div>
-          Periodo
+          <span id="legendPeriod">Periodo</span>
         </div>
         <div class="legend-item">
           <div class="legend-dot" style="background:rgba(212,168,83,0.4)"></div>
-          Ovulación
+          <span id="legendOvulation">Ovulación</span>
         </div>
         <div class="legend-item">
           <div class="legend-dot" style="background:rgba(139,175,142,0.35)"></div>
-          Fértil
+          <span id="legendFertile">Fértil</span>
         </div>
         <div class="legend-item">
           <div class="legend-dot" style="border:1.5px dashed rgba(232,99,122,0.5);background:transparent"></div>
-          Predicción
+          <span id="legendPrediction">Predicción</span>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">🔮 Próximos eventos</div>
+      <div class="card-title" id="upcomingTitle">🔮 Próximos eventos</div>
       <div id="upcomingEvents" style="font-size:14px;color:#888;line-height:2">
         Registra tu ciclo para ver predicciones
       </div>
-      <button class="secondary-btn" onclick="exportCalendar()">Exportar al calendario</button>
+      <button class="secondary-btn" id="exportCalendarBtn" onclick="exportCalendar()">Exportar al calendario</button>
     </div>
 
     <div class="card premium-card">
       <div class="card-title" style="justify-content:space-between">
-        <span>📊 Mis patrones</span>
-        <span class="premium-badge">Premium</span>
+        <span id="patternsTitle">📊 Mis patrones</span>
+        <span class="premium-badge" id="patternsBadge">Premium</span>
       </div>
       <div class="premium-feature">
         <div class="premium-icon">🌡️</div>
         <div>
-          <div class="premium-feature-title">Tendencias por ciclo</div>
-          <div class="premium-feature-copy">Síntomas, flujo y humor comparados durante los últimos ciclos.</div>
+          <div class="premium-feature-title" id="patternsFeature1Title">Tendencias por ciclo</div>
+          <div class="premium-feature-copy" id="patternsFeature1Copy">Síntomas, flujo y humor comparados durante los últimos ciclos.</div>
         </div>
       </div>
       <div class="premium-feature">
         <div class="premium-icon">🌙</div>
         <div>
-          <div class="premium-feature-title">Análisis mensual con Luna</div>
-          <div class="premium-feature-copy">Resumen personalizado con patrones y recomendaciones accionables.</div>
+          <div class="premium-feature-title" id="patternsFeature2Title">Análisis mensual con Luna</div>
+          <div class="premium-feature-copy" id="patternsFeature2Copy">Resumen personalizado con patrones y recomendaciones accionables.</div>
         </div>
       </div>
-      <button class="save-btn" onclick="openPremium('patterns')">Desbloquear patrones</button>
+      <button class="save-btn" id="unlockPatternsBtn" onclick="openPremium('patterns')">Desbloquear patrones</button>
     </div>
   </div>
 
   <!-- SCREEN: LUNA (AI Chat) -->
   <div class="screen" id="screen-luna">
     <div class="card" style="margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0">
-      <div class="card-title">🌙 Habla con Luna</div>
-      <div style="font-size:13px;color:#aaa;margin-top:-8px;margin-bottom:12px">Tu asistente de ciclo con IA</div>
+      <div class="card-title" id="chatTitle">🌙 Habla con Luna</div>
+      <div id="chatSubtitle" style="font-size:13px;color:#aaa;margin-top:-8px;margin-bottom:12px">Tu asistente de ciclo con IA</div>
       
       <div class="quick-questions" id="quickQuestions">
-        <button class="quick-q" onclick="sendQuickQ(this)">¿Por qué tengo acné ahora?</button>
-        <button class="quick-q" onclick="sendQuickQ(this)">¿Qué comer hoy?</button>
-        <button class="quick-q" onclick="sendQuickQ(this)">Tengo muchos calambres</button>
-        <button class="quick-q" onclick="sendQuickQ(this)">¿Cuándo es mi ventana fértil?</button>
-        <button class="quick-q" onclick="sendQuickQ(this)">Me siento muy irritable</button>
-        <button class="quick-q" onclick="sendQuickQ(this)">Ejercicio para hoy</button>
+        <button class="quick-q" id="quickQ1" onclick="sendQuickQ(this)">¿Por qué tengo acné ahora?</button>
+        <button class="quick-q" id="quickQ2" onclick="sendQuickQ(this)">¿Qué comer hoy?</button>
+        <button class="quick-q" id="quickQ3" onclick="sendQuickQ(this)">Tengo muchos calambres</button>
+        <button class="quick-q" id="quickQ4" onclick="sendQuickQ(this)">¿Cuándo es mi ventana fértil?</button>
+        <button class="quick-q" id="quickQ5" onclick="sendQuickQ(this)">Me siento muy irritable</button>
+        <button class="quick-q" id="quickQ6" onclick="sendQuickQ(this)">Ejercicio para hoy</button>
       </div>
 
       <div class="chat-container" id="chatContainer">
-        <div class="empty-chat">
+        <div class="empty-chat" id="emptyChat">
           Pregúntame cualquier cosa sobre tu ciclo 🌸
         </div>
       </div>
@@ -1230,13 +1230,13 @@
 
     <div class="card premium-card" style="margin-top:16px">
       <div class="card-title" style="justify-content:space-between">
-        <span>✨ Luna Pro</span>
-        <span class="premium-badge">Premium</span>
+        <span id="lunaProTitle">✨ Luna Pro</span>
+        <span class="premium-badge" id="lunaProBadge">Premium</span>
       </div>
-      <div style="font-size:14px;color:#888;line-height:1.6">
+      <div id="lunaProCopy" style="font-size:14px;color:#888;line-height:1.6">
         Preguntas profundas sobre patrones, preparación de la regla, energía, piel, sueño y nutrición con memoria del último ciclo.
       </div>
-      <button class="save-btn" onclick="openPremium('luna-pro')">Activar Luna Pro</button>
+      <button class="save-btn" id="activateLunaProBtn" onclick="openPremium('luna-pro')">Activar Luna Pro</button>
     </div>
   </div>
 
@@ -1247,7 +1247,7 @@
 
       <div class="profile-field">
         <div class="profile-label" id="profileLanguageLabel">Idioma</div>
-        <select class="profile-input" id="profileLanguage">
+        <select class="profile-input" id="profileLanguage" onchange="changeLanguageFromProfile()">
           <option value="es">Español</option>
           <option value="ca">Català</option>
           <option value="en">English</option>
@@ -1286,13 +1286,13 @@
       </div>
 
       <div class="profile-field">
-        <div class="profile-label">🔑 Groq API Key <span style="color:#E8637A;font-size:11px">(gratis en console.groq.com)</span></div>
+        <div class="profile-label" id="groqKeyLabel">🔑 Groq API Key <span style="color:#E8637A;font-size:11px">(gratis en console.groq.com)</span></div>
         <input class="profile-input" id="profileGroqKey" type="password" placeholder="gsk_...">
         <div class="status-pill" id="groqKeyStatus">Luna AI sin activar</div>
-        <div class="field-hint">Se guarda solo en este dispositivo. No la publiques dentro del HTML.</div>
+        <div class="field-hint" id="groqKeyHint">Se guarda solo en este dispositivo. No la publiques dentro del HTML.</div>
         <label class="consent-row">
           <input id="profileAiConsent" type="checkbox">
-          <span class="consent-text">Permito enviar mi contexto de ciclo a Groq cuando use Luna AI.</span>
+          <span class="consent-text" id="aiConsentText">Permito enviar mi contexto de ciclo a Groq cuando use Luna AI.</span>
         </label>
       </div>
 
@@ -1301,42 +1301,42 @@
 
     <div class="card premium-card">
       <div class="card-title" style="justify-content:space-between">
-        <span>💎 LunaSync Premium</span>
+        <span id="premiumTitle">💎 LunaSync Premium</span>
         <span class="premium-badge" id="planBadge">Gratis</span>
       </div>
-      <div class="premium-price">4,99€ <span>/ mes</span></div>
-      <div class="field-hint">La base de la app seguirá siendo gratuita: registro diario, calendario, predicciones básicas, exportación de datos y privacidad local.</div>
+      <div class="premium-price">4,99€ <span id="premiumPriceSuffix">/ mes</span></div>
+      <div class="field-hint" id="premiumFreeHint">La base de la app seguirá siendo gratuita: registro diario, calendario, predicciones básicas, exportación de datos y privacidad local.</div>
       <div class="premium-feature">
         <div class="premium-icon">📊</div>
         <div>
-          <div class="premium-feature-title">Patrones avanzados</div>
-          <div class="premium-feature-copy">Gráficos de síntomas, humor y flujo por fase y por ciclo.</div>
+          <div class="premium-feature-title" id="premiumFeature1Title">Patrones avanzados</div>
+          <div class="premium-feature-copy" id="premiumFeature1Copy">Gráficos de síntomas, humor y flujo por fase y por ciclo.</div>
         </div>
       </div>
       <div class="premium-feature">
         <div class="premium-icon">🌙</div>
         <div>
-          <div class="premium-feature-title">Luna Pro</div>
-          <div class="premium-feature-copy">Análisis mensual y respuestas con más contexto del historial.</div>
+          <div class="premium-feature-title" id="premiumFeature2Title">Luna Pro</div>
+          <div class="premium-feature-copy" id="premiumFeature2Copy">Análisis mensual y respuestas con más contexto del historial.</div>
         </div>
       </div>
       <div class="premium-feature">
         <div class="premium-icon">🔔</div>
         <div>
-          <div class="premium-feature-title">Recordatorios inteligentes</div>
-          <div class="premium-feature-copy">Avisos de regla, ventana fértil, autocuidado y registro diario.</div>
+          <div class="premium-feature-title" id="premiumFeature3Title">Recordatorios inteligentes</div>
+          <div class="premium-feature-copy" id="premiumFeature3Copy">Avisos de regla, ventana fértil, autocuidado y registro diario.</div>
         </div>
       </div>
-      <button class="save-btn" onclick="openPremium('profile')">Ver Premium</button>
-      <button class="secondary-btn" onclick="activatePremiumDemo()">Activar Premium demo</button>
+      <button class="save-btn" id="viewPremiumBtn" onclick="openPremium('profile')">Ver Premium</button>
+      <button class="secondary-btn" id="activatePremiumDemoBtn" onclick="activatePremiumDemo()">Activar Premium demo</button>
     </div>
 
     <div class="card">
       <div class="card-title" id="privacyTitle">🔒 Privacidad</div>
       <div id="privacyCopy" style="font-size:14px;color:#888;line-height:1.6">
-        Todos tus datos se guardan <strong>únicamente en este dispositivo</strong>. 
-        No compartimos ni vendemos tu información. 
-        LunaSync funciona 100% offline.
+        Tus registros se guardan <strong>únicamente en este dispositivo</strong>. 
+        LunaSync no comparte ni vende tu información. 
+        Luna AI solo se conecta a Groq si la activas.
       </div>
       <button class="save-btn" id="exportDataBtn" onclick="exportData()" style="margin-top:16px">Exportar mis datos</button>
       <button class="danger-btn" id="resetDataBtn" onclick="resetData()">Borrar todos mis datos</button>
@@ -1386,36 +1386,36 @@
 <div class="premium-modal" id="premiumModal" onclick="if(event.target===this)closePremium()">
   <div class="premium-sheet">
     <div class="card-title" style="justify-content:space-between;margin-bottom:8px">
-      <span>💎 LunaSync Premium</span>
+      <span id="premiumModalTitle">💎 LunaSync Premium</span>
       <button onclick="closePremium()" style="border:none;background:none;font-size:22px;color:#999;cursor:pointer">×</button>
     </div>
-    <div style="font-size:14px;color:#888;line-height:1.6">
+    <div id="premiumModalCopy" style="font-size:14px;color:#888;line-height:1.6">
       Premium está pensado para las usuarias que ya registran su ciclo y quieren entender patrones reales, no solo apuntar fechas.
     </div>
-    <div class="premium-price">4,99€ <span>/ mes</span></div>
+    <div class="premium-price">4,99€ <span id="premiumModalPriceSuffix">/ mes</span></div>
     <div class="premium-feature">
       <div class="premium-icon">📊</div>
       <div>
-        <div class="premium-feature-title">Mis patrones</div>
-        <div class="premium-feature-copy">Gráficos de síntomas, humor, flujo y fases en los últimos ciclos.</div>
+        <div class="premium-feature-title" id="premiumModalFeature1Title">Mis patrones</div>
+        <div class="premium-feature-copy" id="premiumModalFeature1Copy">Gráficos de síntomas, humor, flujo y fases en los últimos ciclos.</div>
       </div>
     </div>
     <div class="premium-feature">
       <div class="premium-icon">✨</div>
       <div>
-        <div class="premium-feature-title">Análisis mensual con Luna</div>
-        <div class="premium-feature-copy">Un resumen útil de tu mes con señales recurrentes y recomendaciones.</div>
+        <div class="premium-feature-title" id="premiumModalFeature2Title">Análisis mensual con Luna</div>
+        <div class="premium-feature-copy" id="premiumModalFeature2Copy">Un resumen útil de tu mes con señales recurrentes y recomendaciones.</div>
       </div>
     </div>
     <div class="premium-feature">
       <div class="premium-icon">🔔</div>
       <div>
-        <div class="premium-feature-title">Recordatorios inteligentes</div>
-        <div class="premium-feature-copy">Notificaciones de regla, autocuidado, fase fértil y registro diario.</div>
+        <div class="premium-feature-title" id="premiumModalFeature3Title">Recordatorios inteligentes</div>
+        <div class="premium-feature-copy" id="premiumModalFeature3Copy">Notificaciones de regla, autocuidado, fase fértil y registro diario.</div>
       </div>
     </div>
-    <button class="save-btn" onclick="activatePremiumDemo()">Probar Premium demo</button>
-    <button class="secondary-btn" onclick="closePremium()">Seguir gratis</button>
+    <button class="save-btn" id="premiumModalDemoBtn" onclick="activatePremiumDemo()">Probar Premium demo</button>
+    <button class="secondary-btn" id="premiumModalFreeBtn" onclick="closePremium()">Seguir gratis</button>
   </div>
 </div>
 
@@ -1440,37 +1440,97 @@ let onboardingStep = 0;
 
 const I18N = {
   es: {
-    navHoy: 'Hoy', navCiclo: 'Ciclo', navLuna: 'Luna AI', navPerfil: 'Perfil',
+    appTitle: 'LunaSync — Tu ciclo, tu ritmo', manifestDescription: 'Seguimiento privado de ciclo menstrual con Luna AI.', navHoy: 'Hoy', navCiclo: 'Ciclo', navLuna: 'Luna AI', navPerfil: 'Perfil',
     onboardingCopy: ['Vamos a configurar tu ciclo en menos de un minuto.', 'Si no lo sabes exacto, 28 días es una buena base para empezar.', 'Con esta fecha LunaSync calculará tu fase actual y próximas predicciones.'],
     onboardingNameLabel: '¿Cómo te llamas?', onboardingNamePlaceholder: 'Tu nombre', onboardingCycleLabel: 'Duración media de tu ciclo', onboardingPeriodLabel: 'Primer día de tu último periodo', onboardingNext: 'Continuar', onboardingStart: 'Empezar',
     profileTitle: '👤 Tu perfil', profileLanguageLabel: 'Idioma', profileNameLabel: 'Nombre', profileNamePlaceholder: 'Tu nombre', profileNameHint: 'Se usa para personalizar Luna AI y tus resúmenes.', profileCycleLabel: 'Duración media del ciclo (días)', profilePeriodLabel: 'Duración media del periodo (días)', profileDobLabel: 'Fecha de nacimiento', profileGoalLabel: 'Objetivo',
     goalHealth: 'Salud general', goalPregnancy: 'Buscar embarazo', goalContraception: 'Anticoncepción natural', goalPms: 'Gestionar SPM',
-    profileSaveBtn: 'Guardar perfil', privacyTitle: '🔒 Privacidad', privacyCopy: 'Todos tus datos se guardan <strong>únicamente en este dispositivo</strong>. No compartimos ni vendemos tu información. LunaSync funciona 100% offline.', exportDataBtn: 'Exportar mis datos', resetDataBtn: 'Borrar todos mis datos',
+    profileSaveBtn: 'Guardar perfil', privacyTitle: '🔒 Privacidad', privacyCopy: 'Tus registros se guardan <strong>únicamente en este dispositivo</strong>. LunaSync no comparte ni vende tu información. Si activas Luna AI, solo entonces se envía a Groq el contexto necesario para responder al chat.', exportDataBtn: 'Exportar mis datos', resetDataBtn: 'Borrar todos mis datos',
     installTitle: '📱 Instalar LunaSync', installCopy: 'En iPhone: comparte esta página y toca <strong>Añadir a pantalla de inicio</strong>. En Android: abre el menú del navegador y toca <strong>Instalar app</strong>.', installHint: 'La app seguirá guardando los datos en este dispositivo.',
     medicalTitle: '⚠️ Aviso médico', medicalCopy: 'LunaSync es una herramienta de seguimiento personal y no sustituye el consejo médico profesional. Consulta siempre con tu ginecóloga o médica para cualquier preocupación de salud.',
-    toastName: 'Escribe tu nombre para continuar', toastCycle: 'El ciclo debe estar entre 21 y 45 días', toastPeriod: 'El periodo debe estar entre 2 y 10 días', toastLastPeriod: 'Selecciona el inicio de tu último periodo', toastWelcome: 'Bienvenida a LunaSync', toastSaved: '✅ Perfil guardado'
+    toastName: 'Escribe tu nombre para continuar', toastCycle: 'El ciclo debe estar entre 21 y 45 días', toastPeriod: 'El periodo debe estar entre 2 y 10 días', toastLastPeriod: 'Selecciona el inicio de tu último periodo', toastWelcome: 'Bienvenida a LunaSync', toastSaved: '✅ Perfil guardado', toastLogSaved: '✅ Registro guardado', toastPeriodAdded: '🩸 Periodo registrado', toastPeriodRemoved: 'Periodo eliminado de hoy', toastNeedPeriod: 'Registra tu periodo primero', toastCalendarExported: 'Calendario exportado', toastDataExported: 'Datos exportados', toastPremiumActive: 'Premium ya está activo', toastPremiumDemo: 'Premium demo activado', toastGroqFormat: 'La clave de Groq suele empezar por gsk_', toastDeleteConfirm: '¿Borrar todos tus datos de LunaSync en este dispositivo? Esta acción no se puede deshacer.',
+    languageGateCopy: 'Elige tu idioma / Tria el teu idioma / Choose your language.', languageEsCopy: 'Ciclo, bienestar y Luna AI en español.', languageCaCopy: 'Cicle, benestar i Luna AI en català.', languageEnCopy: 'Cycle, wellbeing and Luna AI in English.',
+    cycleDayLabel: 'Día del ciclo', noData: 'Sin datos', noPeriodDesc: 'Registra tu periodo para comenzar el seguimiento', periodToday: 'Periodo activo hoy (toca para quitar)', periodStart: 'Registrar inicio de periodo', recoTitle: '✨ Recomendaciones de hoy', logTitle: '📝 Registro de hoy', moodLabel: '¿Cómo te encuentras?', flowLabel: 'Flujo', symptomsLabel: 'Síntomas', saveLogBtn: 'Guardar registro',
+    flowLightLabel: 'Ligero', flowNormalLabel: 'Normal', flowHeavyLabel: 'Abundante', flowVeryHeavyLabel: 'Muy abundante',
+    statDurationLabel: 'Duración ciclo', statPeriodLabel: 'Días regla', statNextLabel: 'Próxima regla', legendPeriod: 'Periodo', legendOvulation: 'Ovulación', legendFertile: 'Fértil', legendPrediction: 'Predicción', upcomingTitle: '🔮 Próximos eventos', upcomingEmpty: 'Registra tu ciclo para ver predicciones', exportCalendarBtn: 'Exportar al calendario', nextPeriod: 'Próxima menstruación', nextOvulation: 'Próxima ovulación', fertileWindow: 'Ventana fértil', inDays: 'en {n} días', today: 'Hoy',
+    chatTitle: '🌙 Habla con Luna', chatSubtitle: 'Tu asistente de ciclo con IA', emptyChat: 'Pregúntame cualquier cosa sobre tu ciclo 🌸', chatPlaceholder: 'Escribe tu pregunta...', quickQ1: '¿Por qué tengo acné ahora?', quickQ2: '¿Qué comer hoy?', quickQ3: 'Tengo muchos calambres', quickQ4: '¿Cuándo es mi ventana fértil?', quickQ5: 'Me siento muy irritable', quickQ6: 'Ejercicio para hoy',
+    groqKeyLabel: '🔑 Groq API Key <span style="color:#E8637A;font-size:11px">(gratis en console.groq.com)</span>', groqKeyStatusOn: 'Luna AI activada en este dispositivo', groqKeyStatusOff: 'Luna AI sin activar', groqKeyHint: 'Se guarda solo en este dispositivo. No la publiques dentro del HTML.', aiConsentText: 'Permito enviar mi contexto de ciclo a Groq cuando use Luna AI.',
+    premiumWord: 'Premium', freeWord: 'Gratis', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ mes', premiumModalPriceSuffix: '/ mes', premiumFreeHint: 'La base de la app seguirá siendo gratuita: registro diario, calendario, predicciones básicas, exportación de datos y privacidad local.', viewPremiumBtn: 'Ver Premium', activatePremiumDemoBtn: 'Activar Premium demo',
+    patternsTitle: '📊 Mis patrones', patternsFeature1Title: 'Tendencias por ciclo', patternsFeature1Copy: 'Síntomas, flujo y humor comparados durante los últimos ciclos.', patternsFeature2Title: 'Análisis mensual con Luna', patternsFeature2Copy: 'Resumen personalizado con patrones y recomendaciones accionables.', unlockPatternsBtn: 'Desbloquear patrones',
+    lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Preguntas profundas sobre patrones, preparación de la regla, energía, piel, sueño y nutrición con memoria del último ciclo.', activateLunaProBtn: 'Activar Luna Pro',
+    premiumFeature1Title: 'Patrones avanzados', premiumFeature1Copy: 'Gráficos de síntomas, humor y flujo por fase y por ciclo.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Análisis mensual y respuestas con más contexto del historial.', premiumFeature3Title: 'Recordatorios inteligentes', premiumFeature3Copy: 'Avisos de regla, ventana fértil, autocuidado y registro diario.',
+    premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium está pensado para las usuarias que ya registran su ciclo y quieren entender patrones reales, no solo apuntar fechas.', premiumModalFeature1Title: 'Mis patrones', premiumModalFeature1Copy: 'Gráficos de síntomas, humor, flujo y fases en los últimos ciclos.', premiumModalFeature2Title: 'Análisis mensual con Luna', premiumModalFeature2Copy: 'Un resumen útil de tu mes con señales recurrentes y recomendaciones.', premiumModalFeature3Title: 'Recordatorios inteligentes', premiumModalFeature3Copy: 'Notificaciones de regla, autocuidado, fase fértil y registro diario.', premiumModalDemoBtn: 'Probar Premium demo', premiumModalFreeBtn: 'Seguir gratis',
+    months: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdaysShort: ['Lu','Ma','Mi','Ju','Vi','Sá','Do'],
+    symptoms: ['Cabeza','Hinchazón','Calambres','Cansancio','Náuseas','Retención agua','Acné','Energía alta','Antojos','Ansiedad','Sensibilidad','Libido alta','Bajón de ánimo','Piel radiante'],
+    aiLanguage: 'español',
+    defaultRecos: [
+      {e:'🌿',cat:'Ejercicio',txt:'Registra tu periodo para ver recomendaciones personalizadas'},
+      {e:'🥗',cat:'Nutrición',txt:'Basadas en tu fase del ciclo'},
+      {e:'🧠',cat:'Energía',txt:'Optimiza tu día según tus hormonas'},
+      {e:'💆',cat:'Bienestar',txt:'Tips de autocuidado personalizados'}
+    ]
   },
   ca: {
-    navHoy: 'Avui', navCiclo: 'Cicle', navLuna: 'Luna AI', navPerfil: 'Perfil',
+    appTitle: 'LunaSync — El teu cicle, el teu ritme', manifestDescription: 'Seguiment privat del cicle menstrual amb Luna AI.', navHoy: 'Avui', navCiclo: 'Cicle', navLuna: 'Luna AI', navPerfil: 'Perfil',
     onboardingCopy: ['Configurarem el teu cicle en menys d’un minut.', 'Si no ho saps exacte, 28 dies és una bona base per començar.', 'Amb aquesta data LunaSync calcularà la fase actual i les properes prediccions.'],
     onboardingNameLabel: 'Com et dius?', onboardingNamePlaceholder: 'El teu nom', onboardingCycleLabel: 'Durada mitjana del teu cicle', onboardingPeriodLabel: 'Primer dia de la teva última regla', onboardingNext: 'Continuar', onboardingStart: 'Començar',
     profileTitle: '👤 El teu perfil', profileLanguageLabel: 'Idioma', profileNameLabel: 'Nom', profileNamePlaceholder: 'El teu nom', profileNameHint: 'S’utilitza per personalitzar Luna AI i els teus resums.', profileCycleLabel: 'Durada mitjana del cicle (dies)', profilePeriodLabel: 'Durada mitjana de la regla (dies)', profileDobLabel: 'Data de naixement', profileGoalLabel: 'Objectiu',
     goalHealth: 'Salut general', goalPregnancy: 'Buscar embaràs', goalContraception: 'Anticoncepció natural', goalPms: 'Gestionar SPM',
-    profileSaveBtn: 'Desar perfil', privacyTitle: '🔒 Privacitat', privacyCopy: 'Totes les dades es guarden <strong>només en aquest dispositiu</strong>. No compartim ni venem la teva informació. LunaSync funciona 100% offline.', exportDataBtn: 'Exportar les meves dades', resetDataBtn: 'Esborrar totes les dades',
+    profileSaveBtn: 'Desar perfil', privacyTitle: '🔒 Privacitat', privacyCopy: 'Els teus registres es guarden <strong>només en aquest dispositiu</strong>. LunaSync no comparteix ni ven la teva informació. Si actives Luna AI, només llavors s’envia a Groq el context necessari per respondre al xat.', exportDataBtn: 'Exportar les meves dades', resetDataBtn: 'Esborrar totes les dades',
     installTitle: '📱 Instal·lar LunaSync', installCopy: 'A iPhone: comparteix aquesta pàgina i toca <strong>Afegir a la pantalla d’inici</strong>. A Android: obre el menú del navegador i toca <strong>Instal·lar app</strong>.', installHint: 'L’app continuarà guardant les dades en aquest dispositiu.',
     medicalTitle: '⚠️ Avís mèdic', medicalCopy: 'LunaSync és una eina de seguiment personal i no substitueix el consell mèdic professional. Consulta sempre amb la teva ginecòloga o metgessa per qualsevol preocupació de salut.',
-    toastName: 'Escriu el teu nom per continuar', toastCycle: 'El cicle ha d’estar entre 21 i 45 dies', toastPeriod: 'La regla ha d’estar entre 2 i 10 dies', toastLastPeriod: 'Selecciona l’inici de la teva última regla', toastWelcome: 'Benvinguda a LunaSync', toastSaved: '✅ Perfil desat'
+    toastName: 'Escriu el teu nom per continuar', toastCycle: 'El cicle ha d’estar entre 21 i 45 dies', toastPeriod: 'La regla ha d’estar entre 2 i 10 dies', toastLastPeriod: 'Selecciona l’inici de la teva última regla', toastWelcome: 'Benvinguda a LunaSync', toastSaved: '✅ Perfil desat', toastLogSaved: '✅ Registre desat', toastPeriodAdded: '🩸 Regla registrada', toastPeriodRemoved: 'Regla eliminada d’avui', toastNeedPeriod: 'Registra la regla primer', toastCalendarExported: 'Calendari exportat', toastDataExported: 'Dades exportades', toastPremiumActive: 'Premium ja està actiu', toastPremiumDemo: 'Premium demo activat', toastGroqFormat: 'La clau de Groq sol començar per gsk_', toastDeleteConfirm: 'Vols esborrar totes les dades de LunaSync en aquest dispositiu? Aquesta acció no es pot desfer.',
+    languageGateCopy: 'Tria el teu idioma per començar.', languageEsCopy: 'Ciclo, bienestar y Luna AI en español.', languageCaCopy: 'Cicle, benestar i Luna AI en català.', languageEnCopy: 'Cycle, wellbeing and Luna AI in English.',
+    cycleDayLabel: 'Dia del cicle', noData: 'Sense dades', noPeriodDesc: 'Registra la regla per començar el seguiment', periodToday: 'Regla activa avui (toca per treure-la)', periodStart: 'Registrar inici de regla', recoTitle: '✨ Recomanacions d’avui', logTitle: '📝 Registre d’avui', moodLabel: 'Com et trobes?', flowLabel: 'Flux', symptomsLabel: 'Símptomes', saveLogBtn: 'Desar registre',
+    flowLightLabel: 'Lleuger', flowNormalLabel: 'Normal', flowHeavyLabel: 'Abundant', flowVeryHeavyLabel: 'Molt abundant',
+    statDurationLabel: 'Durada cicle', statPeriodLabel: 'Dies regla', statNextLabel: 'Propera regla', legendPeriod: 'Regla', legendOvulation: 'Ovulació', legendFertile: 'Fèrtil', legendPrediction: 'Predicció', upcomingTitle: '🔮 Propers esdeveniments', upcomingEmpty: 'Registra el cicle per veure prediccions', exportCalendarBtn: 'Exportar al calendari', nextPeriod: 'Propera menstruació', nextOvulation: 'Propera ovulació', fertileWindow: 'Finestra fèrtil', inDays: 'd’aquí {n} dies', today: 'Avui',
+    chatTitle: '🌙 Parla amb Luna', chatSubtitle: 'La teva assistent de cicle amb IA', emptyChat: 'Pregunta’m qualsevol cosa sobre el teu cicle 🌸', chatPlaceholder: 'Escriu la teva pregunta...', quickQ1: 'Per què tinc acne ara?', quickQ2: 'Què puc menjar avui?', quickQ3: 'Tinc moltes rampes', quickQ4: 'Quan és la meva finestra fèrtil?', quickQ5: 'Em sento molt irritable', quickQ6: 'Exercici per avui',
+    groqKeyLabel: '🔑 Clau API de Groq <span style="color:#E8637A;font-size:11px">(gratis a console.groq.com)</span>', groqKeyStatusOn: 'Luna AI activada en aquest dispositiu', groqKeyStatusOff: 'Luna AI sense activar', groqKeyHint: 'Es guarda només en aquest dispositiu. No la publiquis dins l’HTML.', aiConsentText: 'Permeto enviar el meu context de cicle a Groq quan utilitzi Luna AI.',
+    premiumWord: 'Premium', freeWord: 'Gratis', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ mes', premiumModalPriceSuffix: '/ mes', premiumFreeHint: 'La base de l’app continuarà sent gratuïta: registre diari, calendari, prediccions bàsiques, exportació de dades i privacitat local.', viewPremiumBtn: 'Veure Premium', activatePremiumDemoBtn: 'Activar Premium demo',
+    patternsTitle: '📊 Els meus patrons', patternsFeature1Title: 'Tendències per cicle', patternsFeature1Copy: 'Símptomes, flux i estat d’ànim comparats durant els últims cicles.', patternsFeature2Title: 'Anàlisi mensual amb Luna', patternsFeature2Copy: 'Resum personalitzat amb patrons i recomanacions accionables.', unlockPatternsBtn: 'Desbloquejar patrons',
+    lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Preguntes profundes sobre patrons, preparació de la regla, energia, pell, son i nutrició amb memòria de l’últim cicle.', activateLunaProBtn: 'Activar Luna Pro',
+    premiumFeature1Title: 'Patrons avançats', premiumFeature1Copy: 'Gràfics de símptomes, estat d’ànim i flux per fase i per cicle.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Anàlisi mensual i respostes amb més context de l’historial.', premiumFeature3Title: 'Recordatoris intel·ligents', premiumFeature3Copy: 'Avisos de regla, finestra fèrtil, autocura i registre diari.',
+    premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium està pensat per a usuàries que ja registren el cicle i volen entendre patrons reals, no només apuntar dates.', premiumModalFeature1Title: 'Els meus patrons', premiumModalFeature1Copy: 'Gràfics de símptomes, estat d’ànim, flux i fases en els últims cicles.', premiumModalFeature2Title: 'Anàlisi mensual amb Luna', premiumModalFeature2Copy: 'Un resum útil del teu mes amb senyals recurrents i recomanacions.', premiumModalFeature3Title: 'Recordatoris intel·ligents', premiumModalFeature3Copy: 'Notificacions de regla, autocura, fase fèrtil i registre diari.', premiumModalDemoBtn: 'Provar Premium demo', premiumModalFreeBtn: 'Continuar gratis',
+    months: ['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'], weekdaysShort: ['Dl','Dt','Dc','Dj','Dv','Ds','Dg'],
+    symptoms: ['Cap','Inflor','Rampes','Cansament','Nàusees','Retenció d’aigua','Acne','Energia alta','Desitjos','Ansietat','Sensibilitat','Libido alta','Baixada d’ànim','Pell radiant'],
+    aiLanguage: 'català',
+    defaultRecos: [
+      {e:'🌿',cat:'Exercici',txt:'Registra la regla per veure recomanacions personalitzades'},
+      {e:'🥗',cat:'Nutrició',txt:'Basades en la fase del teu cicle'},
+      {e:'🧠',cat:'Energia',txt:'Optimitza el dia segons les hormones'},
+      {e:'💆',cat:'Benestar',txt:'Consells d’autocura personalitzats'}
+    ]
   },
   en: {
-    navHoy: 'Today', navCiclo: 'Cycle', navLuna: 'Luna AI', navPerfil: 'Profile',
+    appTitle: 'LunaSync — Your cycle, your rhythm', manifestDescription: 'Private menstrual cycle tracking with Luna AI.', navHoy: 'Today', navCiclo: 'Cycle', navLuna: 'Luna AI', navPerfil: 'Profile',
     onboardingCopy: ['Let’s set up your cycle in under a minute.', 'If you are not sure, 28 days is a good starting point.', 'With this date LunaSync will calculate your current phase and upcoming predictions.'],
     onboardingNameLabel: 'What is your name?', onboardingNamePlaceholder: 'Your name', onboardingCycleLabel: 'Average cycle length', onboardingPeriodLabel: 'First day of your last period', onboardingNext: 'Continue', onboardingStart: 'Start',
     profileTitle: '👤 Your profile', profileLanguageLabel: 'Language', profileNameLabel: 'Name', profileNamePlaceholder: 'Your name', profileNameHint: 'Used to personalize Luna AI and your summaries.', profileCycleLabel: 'Average cycle length (days)', profilePeriodLabel: 'Average period length (days)', profileDobLabel: 'Date of birth', profileGoalLabel: 'Goal',
     goalHealth: 'General health', goalPregnancy: 'Trying to conceive', goalContraception: 'Natural contraception', goalPms: 'Manage PMS',
-    profileSaveBtn: 'Save profile', privacyTitle: '🔒 Privacy', privacyCopy: 'All your data is stored <strong>only on this device</strong>. We do not share or sell your information. LunaSync works 100% offline.', exportDataBtn: 'Export my data', resetDataBtn: 'Delete all my data',
+    profileSaveBtn: 'Save profile', privacyTitle: '🔒 Privacy', privacyCopy: 'Your logs are stored <strong>only on this device</strong>. LunaSync does not share or sell your information. If you enable Luna AI, only then is the cycle context needed for chat sent to Groq.', exportDataBtn: 'Export my data', resetDataBtn: 'Delete all my data',
     installTitle: '📱 Install LunaSync', installCopy: 'On iPhone: share this page and tap <strong>Add to Home Screen</strong>. On Android: open the browser menu and tap <strong>Install app</strong>.', installHint: 'The app will keep storing data on this device.',
     medicalTitle: '⚠️ Medical notice', medicalCopy: 'LunaSync is a personal tracking tool and does not replace professional medical advice. Always consult your doctor or gynecologist for health concerns.',
-    toastName: 'Enter your name to continue', toastCycle: 'Cycle length must be between 21 and 45 days', toastPeriod: 'Period length must be between 2 and 10 days', toastLastPeriod: 'Select the start of your last period', toastWelcome: 'Welcome to LunaSync', toastSaved: '✅ Profile saved'
+    toastName: 'Enter your name to continue', toastCycle: 'Cycle length must be between 21 and 45 days', toastPeriod: 'Period length must be between 2 and 10 days', toastLastPeriod: 'Select the start of your last period', toastWelcome: 'Welcome to LunaSync', toastSaved: '✅ Profile saved', toastLogSaved: '✅ Log saved', toastPeriodAdded: '🩸 Period logged', toastPeriodRemoved: 'Period removed from today', toastNeedPeriod: 'Log your period first', toastCalendarExported: 'Calendar exported', toastDataExported: 'Data exported', toastPremiumActive: 'Premium is already active', toastPremiumDemo: 'Premium demo activated', toastGroqFormat: 'Groq keys usually start with gsk_', toastDeleteConfirm: 'Delete all LunaSync data on this device? This cannot be undone.',
+    languageGateCopy: 'Choose your language to start.', languageEsCopy: 'Ciclo, bienestar y Luna AI en español.', languageCaCopy: 'Cicle, benestar i Luna AI en català.', languageEnCopy: 'Cycle, wellbeing and Luna AI in English.',
+    cycleDayLabel: 'Cycle day', noData: 'No data', noPeriodDesc: 'Log your period to start tracking', periodToday: 'Period active today (tap to remove)', periodStart: 'Log period start', recoTitle: '✨ Today’s recommendations', logTitle: '📝 Today’s log', moodLabel: 'How do you feel?', flowLabel: 'Flow', symptomsLabel: 'Symptoms', saveLogBtn: 'Save log',
+    flowLightLabel: 'Light', flowNormalLabel: 'Normal', flowHeavyLabel: 'Heavy', flowVeryHeavyLabel: 'Very heavy',
+    statDurationLabel: 'Cycle length', statPeriodLabel: 'Period days', statNextLabel: 'Next period', legendPeriod: 'Period', legendOvulation: 'Ovulation', legendFertile: 'Fertile', legendPrediction: 'Prediction', upcomingTitle: '🔮 Upcoming events', upcomingEmpty: 'Log your cycle to see predictions', exportCalendarBtn: 'Export to calendar', nextPeriod: 'Next period', nextOvulation: 'Next ovulation', fertileWindow: 'Fertile window', inDays: 'in {n} days', today: 'Today',
+    chatTitle: '🌙 Talk to Luna', chatSubtitle: 'Your AI cycle assistant', emptyChat: 'Ask me anything about your cycle 🌸', chatPlaceholder: 'Write your question...', quickQ1: 'Why do I have acne now?', quickQ2: 'What should I eat today?', quickQ3: 'I have strong cramps', quickQ4: 'When is my fertile window?', quickQ5: 'I feel very irritable', quickQ6: 'Exercise for today',
+    groqKeyLabel: '🔑 Groq API Key <span style="color:#E8637A;font-size:11px">(free at console.groq.com)</span>', groqKeyStatusOn: 'Luna AI active on this device', groqKeyStatusOff: 'Luna AI not active', groqKeyHint: 'Stored only on this device. Do not publish it inside the HTML.', aiConsentText: 'I allow my cycle context to be sent to Groq when I use Luna AI.',
+    premiumWord: 'Premium', freeWord: 'Free', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ month', premiumModalPriceSuffix: '/ month', premiumFreeHint: 'The core app will remain free: daily log, calendar, basic predictions, data export and local privacy.', viewPremiumBtn: 'View Premium', activatePremiumDemoBtn: 'Activate Premium demo',
+    patternsTitle: '📊 My patterns', patternsFeature1Title: 'Cycle trends', patternsFeature1Copy: 'Symptoms, flow and mood compared across recent cycles.', patternsFeature2Title: 'Monthly analysis with Luna', patternsFeature2Copy: 'Personalized summary with patterns and actionable recommendations.', unlockPatternsBtn: 'Unlock patterns',
+    lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Deeper questions about patterns, period prep, energy, skin, sleep and nutrition with memory of your last cycle.', activateLunaProBtn: 'Activate Luna Pro',
+    premiumFeature1Title: 'Advanced patterns', premiumFeature1Copy: 'Charts for symptoms, mood and flow by phase and cycle.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Monthly analysis and answers with more history context.', premiumFeature3Title: 'Smart reminders', premiumFeature3Copy: 'Period, fertile window, self-care and daily log reminders.',
+    premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium is for users who already track their cycle and want to understand real patterns, not just write down dates.', premiumModalFeature1Title: 'My patterns', premiumModalFeature1Copy: 'Charts for symptoms, mood, flow and phases across recent cycles.', premiumModalFeature2Title: 'Monthly analysis with Luna', premiumModalFeature2Copy: 'A useful monthly summary with recurring signals and recommendations.', premiumModalFeature3Title: 'Smart reminders', premiumModalFeature3Copy: 'Period, self-care, fertile phase and daily log notifications.', premiumModalDemoBtn: 'Try Premium demo', premiumModalFreeBtn: 'Keep using free',
+    months: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdaysShort: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    symptoms: ['Headache','Bloating','Cramps','Tiredness','Nausea','Water retention','Acne','High energy','Cravings','Anxiety','Tenderness','High libido','Low mood','Glowing skin'],
+    aiLanguage: 'English',
+    defaultRecos: [
+      {e:'🌿',cat:'Exercise',txt:'Log your period to see personalized recommendations'},
+      {e:'🥗',cat:'Nutrition',txt:'Based on your cycle phase'},
+      {e:'🧠',cat:'Energy',txt:'Plan your day around your hormones'},
+      {e:'💆',cat:'Wellbeing',txt:'Personalized self-care tips'}
+    ]
   }
 };
 
@@ -1530,6 +1590,97 @@ const PHASES = {
     ]
   }
 };
+
+const PHASE_TRANSLATIONS = {
+  ca: {
+    menstrual: {
+      name: 'Fase menstrual',
+      desc: 'El teu cos es renova. Descansa i cuida’t amb amor.',
+      recos: [
+        {e:'🧘',cat:'Exercici',txt:'Ioga restauratiu o caminada suau. Evita HIIT si tens rampes.'},
+        {e:'🫐',cat:'Nutrició',txt:'Ferro (espinacs, llenties), omega-3 i xocolata negra per a les rampes.'},
+        {e:'🕯️',cat:'Energia',txt:'Dia de descans i reflexió. Evita decisions importants.'},
+        {e:'🛁',cat:'Benestar',txt:'Bany calent amb sals, bossa d’aigua calenta i magnesi.'}
+      ]
+    },
+    folicular: {
+      name: 'Fase fol·licular',
+      desc: 'L’energia torna a créixer. És moment de nous començaments.',
+      recos: [
+        {e:'🏋️',cat:'Exercici',txt:'Cardio moderat, peses i rutines noves. Bona capacitat de recuperació.'},
+        {e:'🥦',cat:'Nutrició',txt:'Proteïnes magres, vegetals frescos i carbohidrats complexos per a energia.'},
+        {e:'🎨',cat:'Energia',txt:'Ideal per a projectes creatius, aprenentatges i socialitzar.'},
+        {e:'🌱',cat:'Benestar',txt:'Defineix objectius, planifica i connecta amb amigues. L’ànim puja.'}
+      ]
+    },
+    ovulatoria: {
+      name: 'Fase ovulatòria',
+      desc: 'Estàs en el teu punt àlgid. Brilla, connecta i aprofita l’energia.',
+      recos: [
+        {e:'🏃',cat:'Exercici',txt:'HIIT, córrer, esports intensos o força. Màxima potència.'},
+        {e:'🫐',cat:'Nutrició',txt:'Aliments lleugers, hidratants, zinc i antioxidants.'},
+        {e:'💼',cat:'Energia',txt:'Presentacions, networking i converses importants. Tens més confiança.'},
+        {e:'✨',cat:'Benestar',txt:'Expressa’t, connecta i gaudeix de l’energia més alta del cicle.'}
+      ]
+    },
+    lutea: {
+      name: 'Fase lútia',
+      desc: 'Baixant el ritme amb suavitat. Escolta el cos i cuida’t.',
+      recos: [
+        {e:'🚶',cat:'Exercici',txt:'Ioga, caminades o pilates moderat. Evita sobreentrenar si tens SPM.'},
+        {e:'🥑',cat:'Nutrició',txt:'Proteïnes, greixos saludables, menys sal i cafeïna. Magnesi i B6.'},
+        {e:'📝',cat:'Energia',txt:'Planificació lleugera i tasques de detall. No cal forçar grans decisions.'},
+        {e:'🫶',cat:'Benestar',txt:'Respiració, meditació i banys relaxants. Sigues amable amb tu mateixa.'}
+      ]
+    }
+  },
+  en: {
+    menstrual: {
+      name: 'Menstrual phase',
+      desc: 'Your body is renewing. Rest and care for yourself gently.',
+      recos: [
+        {e:'🧘',cat:'Exercise',txt:'Restorative yoga or an easy walk. Skip HIIT if cramps are strong.'},
+        {e:'🫐',cat:'Nutrition',txt:'Iron-rich foods, omega-3 and dark chocolate may support cramps.'},
+        {e:'🕯️',cat:'Energy',txt:'A good day for rest and reflection. Avoid major decisions if you feel low.'},
+        {e:'🛁',cat:'Wellbeing',txt:'Warm bath, heat pack and magnesium-friendly foods.'}
+      ]
+    },
+    folicular: {
+      name: 'Follicular phase',
+      desc: 'Your energy is rising. A good time for fresh starts.',
+      recos: [
+        {e:'🏋️',cat:'Exercise',txt:'Moderate cardio, strength training or new routines. Recovery may feel easier.'},
+        {e:'🥦',cat:'Nutrition',txt:'Lean protein, fresh vegetables and complex carbs for steady energy.'},
+        {e:'🎨',cat:'Energy',txt:'Great for creative projects, learning and social plans.'},
+        {e:'🌱',cat:'Wellbeing',txt:'Set goals, plan ahead and connect with friends.'}
+      ]
+    },
+    ovulatoria: {
+      name: 'Ovulatory phase',
+      desc: 'You may be at your peak. Connect, shine and use that energy.',
+      recos: [
+        {e:'🏃',cat:'Exercise',txt:'HIIT, running, intense sports or heavier lifting if it feels good.'},
+        {e:'🫐',cat:'Nutrition',txt:'Hydrating foods, zinc and antioxidants such as berries and seeds.'},
+        {e:'💼',cat:'Energy',txt:'Presentations, networking and important conversations may feel easier.'},
+        {e:'✨',cat:'Wellbeing',txt:'Express yourself and enjoy this higher-energy part of the cycle.'}
+      ]
+    },
+    lutea: {
+      name: 'Luteal phase',
+      desc: 'Slowing down with care. Listen to your body.',
+      recos: [
+        {e:'🚶',cat:'Exercise',txt:'Yoga, walking or moderate pilates. Avoid overtraining if PMS appears.'},
+        {e:'🥑',cat:'Nutrition',txt:'Protein, healthy fats, less salt and caffeine. Magnesium and B6 may help.'},
+        {e:'📝',cat:'Energy',txt:'Light planning and detail work. Give yourself room to slow down.'},
+        {e:'🫶',cat:'Wellbeing',txt:'Breathing, meditation and calming baths. Be kind to yourself.'}
+      ]
+    }
+  }
+};
+
+function phaseInfo(key) {
+  return PHASE_TRANSLATIONS[getLang()]?.[key] || PHASES[key];
+}
 
 // ============ HELPERS ============
 function formatDate(d) {
@@ -1612,6 +1763,8 @@ function setText(id, value, html = false) {
 function applyLanguage() {
   const lang = getLang();
   document.documentElement.lang = lang;
+  document.title = t('appTitle');
+  initPwa();
 
   [
     'navHoy','navCiclo','navLuna','navPerfil','profileTitle','profileLanguageLabel',
@@ -1619,21 +1772,44 @@ function applyLanguage() {
     'profileDobLabel','profileGoalLabel','goalHealth','goalPregnancy','goalContraception',
     'goalPms','profileSaveBtn','privacyTitle','exportDataBtn','resetDataBtn',
     'installTitle','installHint','medicalTitle','onboardingNameLabel',
-    'onboardingCycleLabel','onboardingPeriodLabel'
+    'onboardingCycleLabel','onboardingPeriodLabel','languageGateCopy','languageEsCopy',
+    'languageCaCopy','languageEnCopy','cycleDayLabel','recoTitle','logTitle','moodLabel',
+    'flowLabel','symptomsLabel','saveLogBtn','flowLightLabel','flowNormalLabel',
+    'flowHeavyLabel','flowVeryHeavyLabel','statDurationLabel','statPeriodLabel',
+    'statNextLabel','legendPeriod','legendOvulation','legendFertile','legendPrediction',
+    'upcomingTitle','exportCalendarBtn','chatTitle','chatSubtitle','emptyChat','quickQ1',
+    'quickQ2','quickQ3','quickQ4','quickQ5','quickQ6','groqKeyHint','aiConsentText',
+    'premiumTitle','premiumPriceSuffix','premiumFreeHint','viewPremiumBtn',
+    'activatePremiumDemoBtn','patternsTitle','patternsBadge','patternsFeature1Title',
+    'patternsFeature1Copy','patternsFeature2Title','patternsFeature2Copy','unlockPatternsBtn',
+    'lunaProTitle','lunaProBadge','lunaProCopy','activateLunaProBtn','premiumFeature1Title',
+    'premiumFeature1Copy','premiumFeature2Title','premiumFeature2Copy','premiumFeature3Title',
+    'premiumFeature3Copy','premiumModalTitle','premiumModalPriceSuffix',
+    'premiumModalFeature1Title','premiumModalFeature1Copy','premiumModalFeature2Title',
+    'premiumModalFeature2Copy','premiumModalFeature3Title','premiumModalFeature3Copy',
+    'premiumModalDemoBtn','premiumModalFreeBtn'
   ].forEach(id => setText(id, t(id)));
 
   setText('privacyCopy', t('privacyCopy'), true);
   setText('installCopy', t('installCopy'), true);
   setText('medicalCopy', t('medicalCopy'), true);
+  setText('groqKeyLabel', t('groqKeyLabel'), true);
+  setText('premiumModalCopy', t('premiumModalCopy'));
 
   const onboardingName = document.getElementById('onboardingName');
   if (onboardingName) onboardingName.placeholder = t('onboardingNamePlaceholder');
   const profileName = document.getElementById('profileName');
   if (profileName) profileName.placeholder = t('profileNamePlaceholder');
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) chatInput.placeholder = t('chatPlaceholder');
   const profileLanguage = document.getElementById('profileLanguage');
   if (profileLanguage) profileLanguage.value = lang;
 
   renderOnboardingStep();
+  renderHome();
+  if (document.getElementById('screen-ciclo').classList.contains('active')) renderCalendar();
+  updateGroqStatus();
+  updatePlanStatus();
 }
 
 function initLanguageGate() {
@@ -1649,8 +1825,15 @@ function setLanguage(lang) {
   document.getElementById('languageGate').classList.remove('active');
   document.querySelector('.nav').style.display = '';
   applyLanguage();
-  renderHome();
   initOnboarding();
+}
+
+function changeLanguageFromProfile() {
+  const language = document.getElementById('profileLanguage').value || getLang();
+  state.language = language;
+  saveState();
+  applyLanguage();
+  showToast(t('toastSaved'));
 }
 
 // ============ CYCLE LOGIC ============
@@ -1732,7 +1915,7 @@ function renderHome() {
   // Update date header
   const opts = { weekday: 'long', day: 'numeric', month: 'long' };
   document.getElementById('headerDate').innerHTML = 
-    TODAY.toLocaleDateString('es-ES', opts).replace(',','<br>');
+    TODAY.toLocaleDateString(getLang() === 'en' ? 'en-US' : getLang() === 'ca' ? 'ca-ES' : 'es-ES', opts).replace(',','<br>');
 
   // Cycle day ring
   if (cycleDay) {
@@ -1749,25 +1932,36 @@ function renderHome() {
   // Phase badge
   const badge = document.getElementById('phaseBadge');
   if (phase) {
-    badge.textContent = PHASES[phase].name;
+    const info = phaseInfo(phase);
+    badge.textContent = info.name;
     badge.style.background = PHASES[phase].color;
-    document.getElementById('phaseDesc').textContent = PHASES[phase].desc;
+    document.getElementById('phaseDesc').textContent = info.desc;
   } else {
+    badge.textContent = t('noData');
     badge.style.background = '#ddd';
+    document.getElementById('phaseDesc').textContent = t('noPeriodDesc');
   }
 
   // Period button
   const isPeriodToday = state.periodDays.includes(TODAY_STR);
   const btn = document.getElementById('periodToggleBtn');
   document.getElementById('periodBtnText').textContent = isPeriodToday
-    ? 'Periodo activo hoy (toca para quitar)'
-    : 'Registrar inicio de periodo';
+    ? t('periodToday')
+    : t('periodStart');
   btn.classList.toggle('active', isPeriodToday);
 
   // Recommendations
+  const grid = document.getElementById('recoGrid');
   if (phase) {
-    const grid = document.getElementById('recoGrid');
-    grid.innerHTML = PHASES[phase].recos.map(r => `
+    grid.innerHTML = phaseInfo(phase).recos.map(r => `
+      <div class="reco-item">
+        <div class="reco-emoji">${r.e}</div>
+        <div class="reco-cat">${r.cat}</div>
+        <div class="reco-text">${r.txt}</div>
+      </div>
+    `).join('');
+  } else {
+    grid.innerHTML = t('defaultRecos').map(r => `
       <div class="reco-item">
         <div class="reco-emoji">${r.e}</div>
         <div class="reco-cat">${r.cat}</div>
@@ -1779,10 +1973,11 @@ function renderHome() {
   // Symptoms
   const todayLog = state.logs[TODAY_STR] || {};
   const selectedSymptoms = todayLog.symptoms || [];
-  document.getElementById('symptomGrid').innerHTML = SYMPTOMS.map(s => `
+  const symptomLabels = t('symptoms');
+  document.getElementById('symptomGrid').innerHTML = SYMPTOMS.map((s, idx) => `
     <div class="symptom-chip ${selectedSymptoms.includes(s.l) ? 'selected' : ''}" 
       onclick="toggleSymptom('${s.l}', this)">
-      ${s.e} ${s.l}
+      ${s.e} ${symptomLabels[idx] || s.l}
     </div>
   `).join('');
 
@@ -1795,7 +1990,7 @@ function renderHome() {
   // Flow
   const selectedFlow = todayLog.flow || '';
   document.querySelectorAll('.flow-btn').forEach(b => {
-    b.classList.toggle('selected', !!selectedFlow && b.textContent.trim().toLowerCase().includes(selectedFlow));
+    b.classList.toggle('selected', !!selectedFlow && b.dataset.flow === selectedFlow);
   });
 }
 
@@ -1803,10 +1998,10 @@ function renderHome() {
 function togglePeriod() {
   if (state.periodDays.includes(TODAY_STR)) {
     state.periodDays = state.periodDays.filter(d => d !== TODAY_STR);
-    showToast('Periodo eliminado de hoy');
+    showToast(t('toastPeriodRemoved'));
   } else {
     state.periodDays.push(TODAY_STR);
-    showToast('🩸 Periodo registrado');
+    showToast(t('toastPeriodAdded'));
   }
   saveState();
   renderHome();
@@ -1840,15 +2035,14 @@ function selectFlow(btn, flow) {
 
 function saveLog() {
   saveState();
-  showToast('✅ Registro guardado');
+  showToast(t('toastLogSaved'));
 }
 
 // ============ CALENDAR ============
 function renderCalendar() {
   const year = calViewDate.getFullYear();
   const month = calViewDate.getMonth();
-  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const monthNames = t('months');
   
   document.getElementById('calMonth').textContent = `${monthNames[month]} ${year}`;
 
@@ -1856,7 +2050,7 @@ function renderCalendar() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const startOffset = firstDay === 0 ? 6 : firstDay - 1; // Monday start
 
-  let html = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'].map(d => 
+  let html = t('weekdaysShort').map(d => 
     `<div class="cal-day-header">${d}</div>`).join('');
 
   // Empty cells
@@ -1889,7 +2083,7 @@ function renderCalendar() {
   document.getElementById('statDuration').textContent = cl;
   document.getElementById('statPeriod').textContent = pl;
   document.getElementById('statNext').textContent = daysUntil !== null 
-    ? (daysUntil === 0 ? 'Hoy' : daysUntil < 0 ? `+${Math.abs(daysUntil)}d` : `${daysUntil}d`) 
+    ? (daysUntil === 0 ? t('today') : daysUntil < 0 ? `+${Math.abs(daysUntil)}d` : `${daysUntil}d`) 
     : '—';
 
   // Upcoming events
@@ -1901,10 +2095,12 @@ function renderCalendar() {
     const d2 = daysDiff(TODAY_STR, nextOvFuture);
     
     document.getElementById('upcomingEvents').innerHTML = `
-      <div>🩸 <strong>Próxima menstruación:</strong> ${next} (en ${Math.max(0, daysUntil)} días)</div>
-      <div>🌟 <strong>Próxima ovulación:</strong> ${nextOvFuture} (en ${Math.max(0, d2)} días)</div>
-      <div>🌿 <strong>Ventana fértil:</strong> ${addDays(next, ovDay-4)} – ${addDays(next, ovDay+1)}</div>
+      <div>🩸 <strong>${t('nextPeriod')}:</strong> ${next} (${t('inDays').replace('{n}', Math.max(0, daysUntil))})</div>
+      <div>🌟 <strong>${t('nextOvulation')}:</strong> ${nextOvFuture} (${t('inDays').replace('{n}', Math.max(0, d2))})</div>
+      <div>🌿 <strong>${t('fertileWindow')}:</strong> ${addDays(next, ovDay-4)} – ${addDays(next, ovDay+1)}</div>
     `;
+  } else {
+    document.getElementById('upcomingEvents').textContent = t('upcomingEmpty');
   }
 }
 
@@ -1933,7 +2129,7 @@ function nextMonth() {
 function exportCalendar() {
   const next = getNextPeriodDate();
   if (!next) {
-    showToast('Registra tu periodo primero');
+    showToast(t('toastNeedPeriod'));
     return;
   }
 
@@ -1974,7 +2170,7 @@ function exportCalendar() {
   ].join('\r\n');
 
   downloadTextFile(`lunasync-calendario-${TODAY_STR}.ics`, ics, 'text/calendar;charset=utf-8');
-  showToast('Calendario exportado');
+  showToast(t('toastCalendarExported'));
 }
 
 // ============ PROFILE ============
@@ -2009,7 +2205,7 @@ function saveProfile() {
   }
 
   if (groqKey && !groqKey.startsWith('gsk_')) {
-    showToast('La clave de Groq suele empezar por gsk_');
+    showToast(t('toastGroqFormat'));
     return;
   }
 
@@ -2035,8 +2231,8 @@ function updateGroqStatus() {
 
   const hasKey = !!(state.groqKey && state.groqKey.trim());
   status.textContent = hasKey
-    ? 'Luna AI activada en este dispositivo'
-    : 'Luna AI sin activar';
+    ? t('groqKeyStatusOn')
+    : t('groqKeyStatusOff');
   status.classList.toggle('ready', hasKey);
 }
 
@@ -2044,7 +2240,7 @@ function updatePlanStatus() {
   const badge = document.getElementById('planBadge');
   if (!badge) return;
   const premium = state.plan === 'premium';
-  badge.textContent = premium ? 'Premium' : 'Gratis';
+  badge.textContent = premium ? t('premiumWord') : t('freeWord');
   badge.classList.toggle('ready', premium);
 }
 
@@ -2054,7 +2250,7 @@ function isPremium() {
 
 function openPremium(source = 'feature') {
   if (isPremium()) {
-    showToast('Premium ya está activo');
+    showToast(t('toastPremiumActive'));
     return;
   }
   state.lastPremiumIntent = source;
@@ -2072,7 +2268,7 @@ function activatePremiumDemo() {
   saveState();
   updatePlanStatus();
   closePremium();
-  showToast('Premium demo activado');
+  showToast(t('toastPremiumDemo'));
 }
 
 function exportData() {
@@ -2086,11 +2282,11 @@ function exportData() {
     JSON.stringify(payload, null, 2),
     'application/json;charset=utf-8'
   );
-  showToast('Datos exportados');
+  showToast(t('toastDataExported'));
 }
 
 function resetData() {
-  const ok = confirm('¿Borrar todos tus datos de LunaSync en este dispositivo? Esta acción no se puede deshacer.');
+  const ok = confirm(t('toastDeleteConfirm'));
   if (!ok) return;
   localStorage.removeItem('lunasync');
   location.reload();
@@ -2101,28 +2297,34 @@ function buildCycleContext() {
   const cycleDay = getCycleDay();
   const phase = getCurrentPhase(cycleDay);
   const todayLog = state.logs[TODAY_STR] || {};
-  const symptoms = todayLog.symptoms?.join(', ') || 'ninguno registrado';
-  const mood = todayLog.mood || 'no registrado';
-  const flow = todayLog.flow || 'no registrado';
+  const none = getLang() === 'en' ? 'not logged' : getLang() === 'ca' ? 'no registrat' : 'no registrado';
+  const unknown = getLang() === 'en' ? 'unknown' : getLang() === 'ca' ? 'desconegut' : 'desconocido';
+  const symptomLabels = t('symptoms');
+  const symptoms = todayLog.symptoms?.map(s => {
+    const idx = SYMPTOMS.findIndex(item => item.l === s);
+    return symptomLabels[idx] || s;
+  }).join(', ') || none;
+  const mood = todayLog.mood || none;
+  const flow = todayLog.flow || none;
   const next = getNextPeriodDate();
   const daysUntil = next ? daysDiff(TODAY_STR, next) : null;
 
   return `
 Eres Luna, una asistente empática y experta en salud menstrual femenina de la app LunaSync.
-Responde siempre en español, de forma cálida, concisa y con base científica.
+Responde siempre en ${t('aiLanguage')}, de forma cálida, concisa y con base científica.
 Añade siempre un pequeño disclaimer recordando que no sustituyes a un médico cuando des consejos de salud.
 
 DATOS ACTUALES DE LA USUARIA:
-- Nombre: ${state.name || 'usuaria'}
-- Día del ciclo: ${cycleDay || 'desconocido'}
-- Fase actual: ${phase ? PHASES[phase].name : 'desconocida'}
-- Duración media del ciclo: ${state.cycleLength} días
-- Duración media del periodo: ${state.periodLength} días
-- Síntomas de hoy: ${symptoms}
-- Estado de ánimo hoy: ${mood}
-- Flujo de hoy: ${flow}
-- Próxima menstruación en: ${daysUntil !== null ? daysUntil + ' días' : 'desconocido'}
-- Objetivo: ${state.goal || 'salud general'}
+- Nombre/name/nom: ${state.name || (getLang() === 'en' ? 'user' : getLang() === 'ca' ? 'usuària' : 'usuaria')}
+- Día del ciclo / cycle day / dia del cicle: ${cycleDay || unknown}
+- Fase actual / current phase / fase actual: ${phase ? phaseInfo(phase).name : unknown}
+- Duración media del ciclo / cycle length / durada del cicle: ${state.cycleLength} días/days/dies
+- Duración media del periodo / period length / durada de la regla: ${state.periodLength} días/days/dies
+- Síntomas de hoy / symptoms today / símptomes d’avui: ${symptoms}
+- Estado de ánimo hoy / mood today / estat d’ànim avui: ${mood}
+- Flujo de hoy / flow today / flux avui: ${flow}
+- Próxima menstruación / next period / propera regla: ${daysUntil !== null ? t('inDays').replace('{n}', daysUntil) : unknown}
+- Objetivo / goal / objectiu: ${state.goal || unknown}
 
 Responde de forma personalizada basándote en estos datos cuando sea relevante.
 Sé concisa (máximo 4-5 frases) y usa algún emoji para hacer la respuesta más amigable.
@@ -2162,14 +2364,22 @@ async function sendMessage() {
   const groqKey = state.groqKey || '';
   if (!groqKey) {
     typingEl.remove();
-    addChatMsg('⚙️ Añade tu Groq API key en el Perfil para activar a Luna. Es gratis en console.groq.com', 'luna');
+    addChatMsg(getLang() === 'en'
+      ? '⚙️ Add your Groq API key in Profile to activate Luna. It is free at console.groq.com'
+      : getLang() === 'ca'
+        ? '⚙️ Afegeix la teva clau API de Groq al Perfil per activar Luna. És gratis a console.groq.com'
+        : '⚙️ Añade tu Groq API key en el Perfil para activar a Luna. Es gratis en console.groq.com', 'luna');
     document.getElementById('sendBtn').disabled = false;
     return;
   }
 
   if (!state.aiConsent) {
     typingEl.remove();
-    addChatMsg('Activa el permiso de Luna AI en Perfil para enviar tu contexto de ciclo a Groq solo cuando uses el chat.', 'luna');
+    addChatMsg(getLang() === 'en'
+      ? 'Enable Luna AI permission in Profile to send your cycle context to Groq only when you use chat.'
+      : getLang() === 'ca'
+        ? 'Activa el permís de Luna AI al Perfil per enviar el teu context de cicle a Groq només quan facis servir el xat.'
+        : 'Activa el permiso de Luna AI en Perfil para enviar tu contexto de ciclo a Groq solo cuando uses el chat.', 'luna');
     document.getElementById('sendBtn').disabled = false;
     return;
   }
@@ -2196,17 +2406,29 @@ async function sendMessage() {
 
     if (!res.ok) {
       const errMsg = data.error?.message || 'No he podido conectar con Groq.';
-      addChatMsg(`Revisa tu API key en Perfil. Groq respondió: ${errMsg}`, 'luna');
+      addChatMsg(getLang() === 'en'
+        ? `Check your API key in Profile. Groq answered: ${errMsg}`
+        : getLang() === 'ca'
+          ? `Revisa la clau API al Perfil. Groq ha respost: ${errMsg}`
+          : `Revisa tu API key en Perfil. Groq respondió: ${errMsg}`, 'luna');
       return;
     }
 
-    const reply = data.choices?.[0]?.message?.content || 'Lo siento, no pude procesar tu pregunta. Inténtalo de nuevo.';
+    const reply = data.choices?.[0]?.message?.content || (getLang() === 'en'
+      ? 'Sorry, I could not process your question. Try again.'
+      : getLang() === 'ca'
+        ? 'Ho sento, no he pogut processar la pregunta. Torna-ho a provar.'
+        : 'Lo siento, no pude procesar tu pregunta. Inténtalo de nuevo.');
     addChatMsg(reply, 'luna');
     chatHistory.push({ role: 'assistant', content: reply });
 
   } catch (err) {
     typingEl.remove();
-    addChatMsg('Parece que hay un problema de conexión. Revisa tu internet e inténtalo de nuevo. 🌸', 'luna');
+    addChatMsg(getLang() === 'en'
+      ? 'There seems to be a connection problem. Check your internet and try again. 🌸'
+      : getLang() === 'ca'
+        ? 'Sembla que hi ha un problema de connexió. Revisa internet i torna-ho a provar. 🌸'
+        : 'Parece que hay un problema de conexión. Revisa tu internet e inténtalo de nuevo. 🌸', 'luna');
   }
 
   document.getElementById('sendBtn').disabled = false;
@@ -2255,10 +2477,11 @@ function createPwaIcon(size) {
 }
 
 function initPwa() {
+  document.getElementById('lunasyncManifest')?.remove();
   const manifest = {
     name: 'LunaSync',
     short_name: 'LunaSync',
-    description: 'Seguimiento privado de ciclo menstrual con Luna AI.',
+    description: t('manifestDescription'),
     start_url: '.',
     display: 'standalone',
     background_color: '#FDF6F0',
@@ -2270,6 +2493,7 @@ function initPwa() {
   };
   const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
   const link = document.createElement('link');
+  link.id = 'lunasyncManifest';
   link.rel = 'manifest';
   link.href = URL.createObjectURL(blob);
   document.head.appendChild(link);
@@ -2383,7 +2607,6 @@ function showScreen(name, navBtn) {
 }
 
 // ============ INIT ============
-initPwa();
 applyLanguage();
 renderHome();
 updatePlanStatus();
