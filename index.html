@@ -1306,6 +1306,7 @@
       </div>
       <div class="premium-price">4,99€ <span id="premiumPriceSuffix">/ mes</span></div>
       <div class="field-hint" id="premiumFreeHint">La base de la app seguirá siendo gratuita: registro diario, calendario, predicciones básicas, exportación de datos y privacidad local.</div>
+      <div class="status-pill" id="premiumStatus">Plan gratis activo</div>
       <div class="premium-feature">
         <div class="premium-icon">📊</div>
         <div>
@@ -1455,7 +1456,7 @@ const I18N = {
     statDurationLabel: 'Duración ciclo', statPeriodLabel: 'Días regla', statNextLabel: 'Próxima regla', legendPeriod: 'Periodo', legendOvulation: 'Ovulación', legendFertile: 'Fértil', legendPrediction: 'Predicción', upcomingTitle: '🔮 Próximos eventos', upcomingEmpty: 'Registra tu ciclo para ver predicciones', exportCalendarBtn: 'Exportar al calendario', nextPeriod: 'Próxima menstruación', nextOvulation: 'Próxima ovulación', fertileWindow: 'Ventana fértil', inDays: 'en {n} días', today: 'Hoy',
     chatTitle: '🌙 Habla con Luna', chatSubtitle: 'Tu asistente de ciclo con IA', emptyChat: 'Pregúntame cualquier cosa sobre tu ciclo 🌸', chatPlaceholder: 'Escribe tu pregunta...', quickQ1: '¿Por qué tengo acné ahora?', quickQ2: '¿Qué comer hoy?', quickQ3: 'Tengo muchos calambres', quickQ4: '¿Cuándo es mi ventana fértil?', quickQ5: 'Me siento muy irritable', quickQ6: 'Ejercicio para hoy',
     groqKeyLabel: '🔑 Groq API Key <span style="color:#E8637A;font-size:11px">(gratis en console.groq.com)</span>', groqKeyStatusOn: 'Luna AI activada en este dispositivo', groqKeyStatusOff: 'Luna AI sin activar', groqKeyHint: 'Se guarda solo en este dispositivo. No la publiques dentro del HTML.', aiConsentText: 'Permito enviar mi contexto de ciclo a Groq cuando use Luna AI.',
-    premiumWord: 'Premium', freeWord: 'Gratis', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ mes', premiumModalPriceSuffix: '/ mes', premiumFreeHint: 'La base de la app seguirá siendo gratuita: registro diario, calendario, predicciones básicas, exportación de datos y privacidad local.', viewPremiumBtn: 'Ver Premium', activatePremiumDemoBtn: 'Activar Premium demo',
+    premiumWord: 'Premium', freeWord: 'Gratis', trialWord: 'Demo', premiumStatusFree: 'Plan gratis activo', premiumStatusTrial: 'Demo Premium hasta {date}', premiumStatusPaid: 'Premium activo', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ mes', premiumModalPriceSuffix: '/ mes', premiumFreeHint: 'La base de la app seguirá siendo gratuita: registro diario, calendario, predicciones básicas, exportación de datos y privacidad local.', viewPremiumBtn: 'Ver Premium', activatePremiumDemoBtn: 'Activar Premium demo',
     patternsTitle: '📊 Mis patrones', patternsFeature1Title: 'Tendencias por ciclo', patternsFeature1Copy: 'Síntomas, flujo y humor comparados durante los últimos ciclos.', patternsFeature2Title: 'Análisis mensual con Luna', patternsFeature2Copy: 'Resumen personalizado con patrones y recomendaciones accionables.', unlockPatternsBtn: 'Desbloquear patrones',
     lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Preguntas profundas sobre patrones, preparación de la regla, energía, piel, sueño y nutrición con memoria del último ciclo.', activateLunaProBtn: 'Activar Luna Pro',
     premiumFeature1Title: 'Patrones avanzados', premiumFeature1Copy: 'Gráficos de síntomas, humor y flujo por fase y por ciclo.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Análisis mensual y respuestas con más contexto del historial.', premiumFeature3Title: 'Recordatorios inteligentes', premiumFeature3Copy: 'Avisos de regla, ventana fértil, autocuidado y registro diario.',
@@ -1486,7 +1487,7 @@ const I18N = {
     statDurationLabel: 'Durada cicle', statPeriodLabel: 'Dies regla', statNextLabel: 'Propera regla', legendPeriod: 'Regla', legendOvulation: 'Ovulació', legendFertile: 'Fèrtil', legendPrediction: 'Predicció', upcomingTitle: '🔮 Propers esdeveniments', upcomingEmpty: 'Registra el cicle per veure prediccions', exportCalendarBtn: 'Exportar al calendari', nextPeriod: 'Propera menstruació', nextOvulation: 'Propera ovulació', fertileWindow: 'Finestra fèrtil', inDays: 'd’aquí {n} dies', today: 'Avui',
     chatTitle: '🌙 Parla amb Luna', chatSubtitle: 'La teva assistent de cicle amb IA', emptyChat: 'Pregunta’m qualsevol cosa sobre el teu cicle 🌸', chatPlaceholder: 'Escriu la teva pregunta...', quickQ1: 'Per què tinc acne ara?', quickQ2: 'Què puc menjar avui?', quickQ3: 'Tinc moltes rampes', quickQ4: 'Quan és la meva finestra fèrtil?', quickQ5: 'Em sento molt irritable', quickQ6: 'Exercici per avui',
     groqKeyLabel: '🔑 Clau API de Groq <span style="color:#E8637A;font-size:11px">(gratis a console.groq.com)</span>', groqKeyStatusOn: 'Luna AI activada en aquest dispositiu', groqKeyStatusOff: 'Luna AI sense activar', groqKeyHint: 'Es guarda només en aquest dispositiu. No la publiquis dins l’HTML.', aiConsentText: 'Permeto enviar el meu context de cicle a Groq quan utilitzi Luna AI.',
-    premiumWord: 'Premium', freeWord: 'Gratis', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ mes', premiumModalPriceSuffix: '/ mes', premiumFreeHint: 'La base de l’app continuarà sent gratuïta: registre diari, calendari, prediccions bàsiques, exportació de dades i privacitat local.', viewPremiumBtn: 'Veure Premium', activatePremiumDemoBtn: 'Activar Premium demo',
+    premiumWord: 'Premium', freeWord: 'Gratis', trialWord: 'Demo', premiumStatusFree: 'Pla gratis actiu', premiumStatusTrial: 'Demo Premium fins al {date}', premiumStatusPaid: 'Premium actiu', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ mes', premiumModalPriceSuffix: '/ mes', premiumFreeHint: 'La base de l’app continuarà sent gratuïta: registre diari, calendari, prediccions bàsiques, exportació de dades i privacitat local.', viewPremiumBtn: 'Veure Premium', activatePremiumDemoBtn: 'Activar Premium demo',
     patternsTitle: '📊 Els meus patrons', patternsFeature1Title: 'Tendències per cicle', patternsFeature1Copy: 'Símptomes, flux i estat d’ànim comparats durant els últims cicles.', patternsFeature2Title: 'Anàlisi mensual amb Luna', patternsFeature2Copy: 'Resum personalitzat amb patrons i recomanacions accionables.', unlockPatternsBtn: 'Desbloquejar patrons',
     lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Preguntes profundes sobre patrons, preparació de la regla, energia, pell, son i nutrició amb memòria de l’últim cicle.', activateLunaProBtn: 'Activar Luna Pro',
     premiumFeature1Title: 'Patrons avançats', premiumFeature1Copy: 'Gràfics de símptomes, estat d’ànim i flux per fase i per cicle.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Anàlisi mensual i respostes amb més context de l’historial.', premiumFeature3Title: 'Recordatoris intel·ligents', premiumFeature3Copy: 'Avisos de regla, finestra fèrtil, autocura i registre diari.',
@@ -1517,7 +1518,7 @@ const I18N = {
     statDurationLabel: 'Cycle length', statPeriodLabel: 'Period days', statNextLabel: 'Next period', legendPeriod: 'Period', legendOvulation: 'Ovulation', legendFertile: 'Fertile', legendPrediction: 'Prediction', upcomingTitle: '🔮 Upcoming events', upcomingEmpty: 'Log your cycle to see predictions', exportCalendarBtn: 'Export to calendar', nextPeriod: 'Next period', nextOvulation: 'Next ovulation', fertileWindow: 'Fertile window', inDays: 'in {n} days', today: 'Today',
     chatTitle: '🌙 Talk to Luna', chatSubtitle: 'Your AI cycle assistant', emptyChat: 'Ask me anything about your cycle 🌸', chatPlaceholder: 'Write your question...', quickQ1: 'Why do I have acne now?', quickQ2: 'What should I eat today?', quickQ3: 'I have strong cramps', quickQ4: 'When is my fertile window?', quickQ5: 'I feel very irritable', quickQ6: 'Exercise for today',
     groqKeyLabel: '🔑 Groq API Key <span style="color:#E8637A;font-size:11px">(free at console.groq.com)</span>', groqKeyStatusOn: 'Luna AI active on this device', groqKeyStatusOff: 'Luna AI not active', groqKeyHint: 'Stored only on this device. Do not publish it inside the HTML.', aiConsentText: 'I allow my cycle context to be sent to Groq when I use Luna AI.',
-    premiumWord: 'Premium', freeWord: 'Free', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ month', premiumModalPriceSuffix: '/ month', premiumFreeHint: 'The core app will remain free: daily log, calendar, basic predictions, data export and local privacy.', viewPremiumBtn: 'View Premium', activatePremiumDemoBtn: 'Activate Premium demo',
+    premiumWord: 'Premium', freeWord: 'Free', trialWord: 'Demo', premiumStatusFree: 'Free plan active', premiumStatusTrial: 'Premium demo until {date}', premiumStatusPaid: 'Premium active', patternsBadge: 'Premium', lunaProBadge: 'Premium', premiumTitle: '💎 LunaSync Premium', premiumPriceSuffix: '/ month', premiumModalPriceSuffix: '/ month', premiumFreeHint: 'The core app will remain free: daily log, calendar, basic predictions, data export and local privacy.', viewPremiumBtn: 'View Premium', activatePremiumDemoBtn: 'Activate Premium demo',
     patternsTitle: '📊 My patterns', patternsFeature1Title: 'Cycle trends', patternsFeature1Copy: 'Symptoms, flow and mood compared across recent cycles.', patternsFeature2Title: 'Monthly analysis with Luna', patternsFeature2Copy: 'Personalized summary with patterns and actionable recommendations.', unlockPatternsBtn: 'Unlock patterns',
     lunaProTitle: '✨ Luna Pro', lunaProCopy: 'Deeper questions about patterns, period prep, energy, skin, sleep and nutrition with memory of your last cycle.', activateLunaProBtn: 'Activate Luna Pro',
     premiumFeature1Title: 'Advanced patterns', premiumFeature1Copy: 'Charts for symptoms, mood and flow by phase and cycle.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Monthly analysis and answers with more history context.', premiumFeature3Title: 'Smart reminders', premiumFeature3Copy: 'Period, fertile window, self-care and daily log reminders.',
@@ -1690,6 +1691,12 @@ function formatDate(d) {
   return `${y}-${m}-${day}`;
 }
 
+function formatDisplayDate(dateStr) {
+  if (!dateStr) return '—';
+  const locale = getLang() === 'en' ? 'en-US' : getLang() === 'ca' ? 'ca-ES' : 'es-ES';
+  return parseDate(dateStr).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 function parseDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number);
   return new Date(y, m - 1, d);
@@ -1732,6 +1739,15 @@ function downloadTextFile(filename, content, type) {
 function ensureTodayLog() {
   if (!state.logs[TODAY_STR]) state.logs[TODAY_STR] = {};
   return state.logs[TODAY_STR];
+}
+
+function refreshTrialStatus() {
+  if (state.plan !== 'trial') return;
+  if (!state.trialEndsAt || daysDiff(TODAY_STR, state.trialEndsAt) < 0) {
+    state.plan = 'free';
+    state.trialEndsAt = '';
+    saveState();
+  }
 }
 
 function saveState() {
@@ -2248,13 +2264,25 @@ function updateGroqStatus() {
 function updatePlanStatus() {
   const badge = document.getElementById('planBadge');
   if (!badge) return;
+  const status = document.getElementById('premiumStatus');
+  refreshTrialStatus();
   const premium = state.plan === 'premium';
-  badge.textContent = premium ? t('premiumWord') : t('freeWord');
-  badge.classList.toggle('ready', premium);
+  const trial = state.plan === 'trial';
+  badge.textContent = premium ? t('premiumWord') : trial ? t('trialWord') : t('freeWord');
+  badge.classList.toggle('ready', premium || trial);
+  if (status) {
+    status.textContent = premium
+      ? t('premiumStatusPaid')
+      : trial
+        ? t('premiumStatusTrial').replace('{date}', formatDisplayDate(state.trialEndsAt))
+        : t('premiumStatusFree');
+    status.classList.toggle('ready', premium || trial);
+  }
 }
 
 function isPremium() {
-  return state.plan === 'premium';
+  refreshTrialStatus();
+  return state.plan === 'premium' || state.plan === 'trial';
 }
 
 function openPremium(source = 'feature') {
@@ -2272,8 +2300,9 @@ function closePremium() {
 }
 
 function activatePremiumDemo() {
-  state.plan = 'premium';
+  state.plan = 'trial';
   state.premiumDemoActivatedAt = new Date().toISOString();
+  state.trialEndsAt = addDays(TODAY_STR, 30);
   saveState();
   updatePlanStatus();
   closePremium();
