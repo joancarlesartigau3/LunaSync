@@ -1897,8 +1897,18 @@ function saveState() {
 }
 
 function getBusinessConfig() {
+  const normalizeSupabaseUrl = (value) => {
+    const raw = (value || '').trim();
+    if (!raw) return '';
+    try {
+      const url = new URL(raw.startsWith('http') ? raw : `https://${raw}`);
+      return url.origin.replace(/\/$/, '');
+    } catch {
+      return raw.replace(/\/$/, '');
+    }
+  };
   return {
-    supabaseUrl: (state.business.supabaseUrl || APP_CONFIG.supabaseUrl || '').replace(/\/$/, ''),
+    supabaseUrl: normalizeSupabaseUrl(state.business.supabaseUrl || APP_CONFIG.supabaseUrl || ''),
     supabaseAnonKey: state.business.supabaseAnonKey || APP_CONFIG.supabaseAnonKey || '',
     stripeLinks: {
       monthly: state.business.stripeLinks?.monthly || APP_CONFIG.stripeLinks.monthly || '',
@@ -2591,7 +2601,8 @@ function saveProfile() {
 }
 
 function saveBusinessConfig() {
-  state.business.supabaseUrl = document.getElementById('profileSupabaseUrl').value.trim().replace(/\/$/, '');
+  const rawSupabaseUrl = document.getElementById('profileSupabaseUrl').value.trim();
+  state.business.supabaseUrl = rawSupabaseUrl;
   state.business.supabaseAnonKey = document.getElementById('profileSupabaseAnonKey').value.trim();
   state.business.stripeLinks = {
     monthly: document.getElementById('profileStripeMonthly').value.trim(),
@@ -2599,6 +2610,7 @@ function saveBusinessConfig() {
     plus: document.getElementById('profileStripePlus').value.trim()
   };
   saveState();
+  document.getElementById('profileSupabaseUrl').value = getBusinessConfig().supabaseUrl;
   showToast(t('toastBusinessSaved'));
   initRemoteAuth();
 }
