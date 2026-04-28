@@ -1917,7 +1917,7 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), msg.length > 80 ? 6500 : 2500);
 }
 
 function getLang() {
@@ -2088,18 +2088,26 @@ async function sendLoginLink() {
   }
   const email = document.getElementById('accountEmail')?.value.trim() || state.business.email || '';
   if (!email || !email.includes('@')) return;
-  await fetch(`${cfg.supabaseUrl}/auth/v1/otp`, {
+  const body = {
+    email,
+    create_user: true
+  };
+  if (location.protocol.startsWith('http')) {
+    body.options = { email_redirect_to: location.href.split('#')[0] };
+  }
+  const res = await fetch(`${cfg.supabaseUrl}/auth/v1/otp`, {
     method: 'POST',
     headers: {
       apikey: cfg.supabaseAnonKey,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      email,
-      create_user: true,
-      options: { email_redirect_to: location.href.split('#')[0] }
-    })
+    body: JSON.stringify(body)
   });
+  if (!res.ok) {
+    const errorText = await res.text();
+    showToast(`Supabase: ${errorText.slice(0, 180)}`);
+    return;
+  }
   state.business.email = email;
   saveState();
   showToast(t('toastLoginSent'));
