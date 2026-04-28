@@ -2090,6 +2090,16 @@ async function initRemoteAuth() {
   await recordAppEvent('app_open');
 }
 
+function getAuthRedirectUrl() {
+  if (location.hostname === 'joancarlesartigau3.github.io') {
+    return 'https://joancarlesartigau3.github.io/LunaSync/';
+  }
+  if (location.protocol.startsWith('http')) {
+    return location.href.split('#')[0];
+  }
+  return 'https://joancarlesartigau3.github.io/LunaSync/';
+}
+
 async function sendLoginLink() {
   const cfg = getBusinessConfig();
   if (!businessReady()) {
@@ -2100,11 +2110,9 @@ async function sendLoginLink() {
   if (!email || !email.includes('@')) return;
   const body = {
     email,
-    create_user: true
+    create_user: true,
+    options: { email_redirect_to: getAuthRedirectUrl() }
   };
-  if (location.protocol.startsWith('http')) {
-    body.options = { email_redirect_to: location.href.split('#')[0] };
-  }
   const res = await fetch(`${cfg.supabaseUrl}/auth/v1/otp`, {
     method: 'POST',
     headers: {
