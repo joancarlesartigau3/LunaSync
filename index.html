@@ -2110,10 +2110,10 @@ async function sendLoginLink() {
   if (!email || !email.includes('@')) return;
   const body = {
     email,
-    create_user: true,
-    options: { email_redirect_to: getAuthRedirectUrl() }
+    create_user: true
   };
-  const res = await fetch(`${cfg.supabaseUrl}/auth/v1/otp`, {
+  const redirectTo = encodeURIComponent(getAuthRedirectUrl());
+  const res = await fetch(`${cfg.supabaseUrl}/auth/v1/otp?redirect_to=${redirectTo}`, {
     method: 'POST',
     headers: {
       apikey: cfg.supabaseAnonKey,
