@@ -1020,6 +1020,26 @@
     gap: 10px;
     margin-bottom: 16px;
   }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    text-align: left;
+    padding: 9px 6px;
+    border-bottom: 1px solid rgba(45,35,33,0.08);
+  }
+
+  .admin-table th {
+    color: #aaa;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
 </style>
 </head>
 <body>
@@ -1405,6 +1425,33 @@
     </div>
 
     <div class="card">
+      <div class="card-title" id="businessTitle">🧩 U10 Agency</div>
+      <div class="field-hint" id="businessCopy">Conecta Supabase y Stripe para login, Premium real y panel admin.</div>
+      <div class="profile-field">
+        <div class="profile-label" id="supabaseUrlLabel">Supabase Project URL</div>
+        <input class="profile-input" id="profileSupabaseUrl" type="url" placeholder="https://xxxx.supabase.co">
+      </div>
+      <div class="profile-field">
+        <div class="profile-label" id="supabaseAnonLabel">Supabase anon public key</div>
+        <input class="profile-input" id="profileSupabaseAnonKey" type="password" placeholder="eyJ...">
+        <div class="field-hint" id="supabaseAnonHint">Es una clave pública. No pegues aquí la service role key.</div>
+      </div>
+      <div class="profile-field">
+        <div class="profile-label" id="stripeMonthlyLabel">Stripe mensual</div>
+        <input class="profile-input" id="profileStripeMonthly" type="url" placeholder="https://buy.stripe.com/...">
+      </div>
+      <div class="profile-field">
+        <div class="profile-label" id="stripeYearlyLabel">Stripe anual</div>
+        <input class="profile-input" id="profileStripeYearly" type="url" placeholder="https://buy.stripe.com/...">
+      </div>
+      <div class="profile-field">
+        <div class="profile-label" id="stripePlusLabel">Stripe Premium+</div>
+        <input class="profile-input" id="profileStripePlus" type="url" placeholder="https://buy.stripe.com/...">
+      </div>
+      <button class="secondary-btn" id="saveBusinessBtn" onclick="saveBusinessConfig()">Guardar conexión</button>
+    </div>
+
+    <div class="card">
       <div class="card-title" id="privacyTitle">🔒 Privacidad</div>
       <div id="privacyCopy" style="font-size:14px;color:#888;line-height:1.6">
         Tus registros se guardan <strong>únicamente en este dispositivo</strong>. 
@@ -1508,12 +1555,25 @@ if (!state.logs) state.logs = {}; // date -> {mood, symptoms, flow}
 if (!state.name) state.name = '';
 if (!('language' in state)) state.language = '';
 if (!state.plan) state.plan = 'free';
+if (!state.business) state.business = {};
+if (!state.business.stripeLinks) state.business.stripeLinks = {};
+if (!state.deviceId) state.deviceId = crypto.randomUUID ? crypto.randomUUID() : `device-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 let calViewDate = new Date();
 let chatHistory = [];
 const TODAY = new Date();
 const TODAY_STR = formatDate(TODAY);
 let onboardingStep = 0;
+
+const APP_CONFIG = {
+  supabaseUrl: '',
+  supabaseAnonKey: '',
+  stripeLinks: {
+    monthly: '',
+    yearly: '',
+    plus: ''
+  }
+};
 
 const I18N = {
   es: {
@@ -1525,7 +1585,7 @@ const I18N = {
     profileSaveBtn: 'Guardar perfil', privacyTitle: '🔒 Privacidad', privacyCopy: 'Tus registros se guardan <strong>únicamente en este dispositivo</strong>. LunaSync no comparte ni vende tu información. Si activas Luna AI, solo entonces se envía a Groq el contexto necesario para responder al chat.', exportDataBtn: 'Exportar mis datos', resetDataBtn: 'Borrar todos mis datos',
     installTitle: '📱 Instalar LunaSync', installCopy: 'En iPhone: comparte esta página y toca <strong>Añadir a pantalla de inicio</strong>. En Android: abre el menú del navegador y toca <strong>Instalar app</strong>.', installHint: 'La app seguirá guardando los datos en este dispositivo.',
     medicalTitle: '⚠️ Aviso médico', medicalCopy: 'LunaSync es una herramienta de seguimiento personal y no sustituye el consejo médico profesional. Consulta siempre con tu ginecóloga o médica para cualquier preocupación de salud.',
-    toastName: 'Escribe tu nombre para continuar', toastCycle: 'El ciclo debe estar entre 21 y 45 días', toastPeriod: 'El periodo debe estar entre 2 y 10 días', toastLastPeriod: 'Selecciona el inicio de tu último periodo', toastWelcome: 'Bienvenida a LunaSync', toastSaved: '✅ Perfil guardado', toastLogSaved: '✅ Registro guardado', toastPeriodAdded: '🩸 Periodo registrado', toastPeriodRemoved: 'Periodo eliminado de hoy', toastNeedPeriod: 'Registra tu periodo primero', toastCalendarExported: 'Calendario exportado', toastDataExported: 'Datos exportados', toastPremiumActive: 'Premium ya está activo', toastPremiumDemo: 'Premium demo activado', toastGroqFormat: 'La clave de Groq suele empezar por gsk_', toastDeleteConfirm: '¿Borrar todos tus datos de LunaSync en este dispositivo? Esta acción no se puede deshacer.',
+    toastName: 'Escribe tu nombre para continuar', toastCycle: 'El ciclo debe estar entre 21 y 45 días', toastPeriod: 'El periodo debe estar entre 2 y 10 días', toastLastPeriod: 'Selecciona el inicio de tu último periodo', toastWelcome: 'Bienvenida a LunaSync', toastSaved: '✅ Perfil guardado', toastLogSaved: '✅ Registro guardado', toastPeriodAdded: '🩸 Periodo registrado', toastPeriodRemoved: 'Periodo eliminado de hoy', toastNeedPeriod: 'Registra tu periodo primero', toastCalendarExported: 'Calendario exportado', toastDataExported: 'Datos exportados', toastPremiumActive: 'Premium ya está activo', toastPremiumDemo: 'Premium demo activado', toastGroqFormat: 'La clave de Groq suele empezar por gsk_', toastDeleteConfirm: '¿Borrar todos tus datos de LunaSync en este dispositivo? Esta acción no se puede deshacer.', toastBusinessSaved: 'Conexión guardada', toastLoginSent: 'Revisa tu email para entrar', toastLoginNeeded: 'Inicia sesión para activar Premium automático', toastSupabaseNeeded: 'Configura Supabase en Perfil', toastStripeNeeded: 'Añade este link de Stripe en Perfil',
     languageGateCopy: 'Elige tu idioma / Tria el teu idioma / Choose your language.', languageEsCopy: 'Ciclo, bienestar y Luna AI en español.', languageCaCopy: 'Cicle, benestar i Luna AI en català.', languageEnCopy: 'Cycle, wellbeing and Luna AI in English.',
     cycleDayLabel: 'Día del ciclo', noData: 'Sin datos', noPeriodDesc: 'Registra tu periodo para comenzar el seguimiento', periodToday: 'Periodo activo hoy (toca para quitar)', periodStart: 'Registrar inicio de periodo', recoTitle: '✨ Recomendaciones de hoy', logTitle: '📝 Registro de hoy', moodLabel: '¿Cómo te encuentras?', flowLabel: 'Flujo', symptomsLabel: 'Síntomas', saveLogBtn: 'Guardar registro',
     flowLightLabel: 'Ligero', flowNormalLabel: 'Normal', flowHeavyLabel: 'Abundante', flowVeryHeavyLabel: 'Muy abundante',
@@ -1538,6 +1598,7 @@ const I18N = {
     premiumFeature1Title: 'Patrones avanzados', premiumFeature1Copy: 'Gráficos de síntomas, humor y flujo por fase y por ciclo.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Análisis mensual y respuestas con más contexto del historial.', premiumFeature3Title: 'Recordatorios inteligentes', premiumFeature3Copy: 'Avisos de regla, ventana fértil, autocuidado y registro diario.',
     premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium está pensado para las usuarias que ya registran su ciclo y quieren entender patrones reales, no solo apuntar fechas.', premiumModalFeature1Title: 'Mis patrones', premiumModalFeature1Copy: 'Gráficos de síntomas, humor, flujo y fases en los últimos ciclos.', premiumModalFeature2Title: 'Análisis mensual con Luna', premiumModalFeature2Copy: 'Un resumen útil de tu mes con señales recurrentes y recomendaciones.', premiumModalFeature3Title: 'Recordatorios inteligentes', premiumModalFeature3Copy: 'Notificaciones de regla, autocuidado, fase fértil y registro diario.', premiumModalDemoBtn: 'Probar Premium demo', premiumModalFreeBtn: 'Seguir gratis',
     premiumScreenTitle: '💎 LunaSync Premium', premiumLockedTitle: 'Entiende tus patrones de verdad', premiumLockedCopy: 'El registro diario y el calendario siguen gratis. Premium desbloquea análisis avanzados, resúmenes del ciclo y herramientas de seguimiento más profundas.', premiumActiveTitle: 'Premium activo', premiumActiveCopy: 'Tus herramientas avanzadas están disponibles en este dispositivo.', premiumTrialBtn: 'Probar 30 días gratis', premiumMonthlyBtn: 'Mensual 4,99€', premiumYearlyBtn: 'Anual 39,99€', premiumPlusBtn: 'Premium+ 7,99€', premiumMonthlyCopy: 'Patrones, análisis mensual y recordatorios inteligentes.', premiumYearlyCopy: 'La opción más rentable para usuarias constantes.', premiumPlusCopy: 'Incluye Luna Pro con análisis más profundo del historial.', premiumFreePlanTitle: 'Gratis', premiumFreePlanCopy: 'Registro diario, calendario, predicciones básicas, exportación y privacidad local.', premiumStatsTitle: 'Resumen premium', premiumSymptomsTitle: 'Síntomas más repetidos', premiumMoodTitle: 'Humor registrado', premiumFlowTitle: 'Flujo registrado', premiumInsightTitle: 'Análisis mensual local', premiumInsightBtn: 'Generar análisis del mes', premiumNoData: 'Aún no hay registros suficientes. Guarda algunos días de síntomas, humor o flujo para ver patrones.', premiumLogsCount: 'Registros', premiumPeriodDaysCount: 'Días de regla', premiumCurrentPhase: 'Fase actual', premiumNoMood: 'Sin humor registrado', premiumNoFlow: 'Sin flujo registrado', premiumInsightEmpty: 'Pulsa el botón para generar un resumen privado con los datos guardados en este dispositivo.', premiumInsightText: 'Este mes has registrado {logs} días. Lo más repetido ha sido {symptom}. El humor más frecuente ha sido {mood} y el flujo más común {flow}. Recomendación: observa si estos patrones se repiten el próximo ciclo antes de sacar conclusiones.',
+    businessTitle: '🧩 U10 Agency', businessCopy: 'Conecta Supabase y Stripe para login, Premium real y panel admin.', supabaseUrlLabel: 'Supabase Project URL', supabaseAnonLabel: 'Supabase anon public key', supabaseAnonHint: 'Es una clave pública. No pegues aquí la service role key.', stripeMonthlyLabel: 'Stripe mensual', stripeYearlyLabel: 'Stripe anual', stripePlusLabel: 'Stripe Premium+', saveBusinessBtn: 'Guardar conexión', accountTitle: 'Cuenta LunaSync', accountCopy: 'Entra con tu email para sincronizar tu plan Premium entre dispositivos.', accountEmailPlaceholder: 'tu@email.com', sendLoginBtn: 'Enviar enlace de acceso', logoutBtn: 'Cerrar sesión', adminTitle: 'Panel admin', adminUsers: 'Usuarias', adminPremium: 'Premium', adminTrial: 'Demo', adminEvents: 'Aperturas', adminRefreshBtn: 'Actualizar panel', adminNoAccess: 'Tu cuenta no tiene rol admin.', paymentOpening: 'Abriendo Stripe...',
     months: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdaysShort: ['Lu','Ma','Mi','Ju','Vi','Sá','Do'],
     symptoms: ['Cabeza','Hinchazón','Calambres','Cansancio','Náuseas','Retención agua','Acné','Energía alta','Antojos','Ansiedad','Sensibilidad','Libido alta','Bajón de ánimo','Piel radiante'],
     aiLanguage: 'español',
@@ -1557,7 +1618,7 @@ const I18N = {
     profileSaveBtn: 'Desar perfil', privacyTitle: '🔒 Privacitat', privacyCopy: 'Els teus registres es guarden <strong>només en aquest dispositiu</strong>. LunaSync no comparteix ni ven la teva informació. Si actives Luna AI, només llavors s’envia a Groq el context necessari per respondre al xat.', exportDataBtn: 'Exportar les meves dades', resetDataBtn: 'Esborrar totes les dades',
     installTitle: '📱 Instal·lar LunaSync', installCopy: 'A iPhone: comparteix aquesta pàgina i toca <strong>Afegir a la pantalla d’inici</strong>. A Android: obre el menú del navegador i toca <strong>Instal·lar app</strong>.', installHint: 'L’app continuarà guardant les dades en aquest dispositiu.',
     medicalTitle: '⚠️ Avís mèdic', medicalCopy: 'LunaSync és una eina de seguiment personal i no substitueix el consell mèdic professional. Consulta sempre amb la teva ginecòloga o metgessa per qualsevol preocupació de salut.',
-    toastName: 'Escriu el teu nom per continuar', toastCycle: 'El cicle ha d’estar entre 21 i 45 dies', toastPeriod: 'La regla ha d’estar entre 2 i 10 dies', toastLastPeriod: 'Selecciona l’inici de la teva última regla', toastWelcome: 'Benvinguda a LunaSync', toastSaved: '✅ Perfil desat', toastLogSaved: '✅ Registre desat', toastPeriodAdded: '🩸 Regla registrada', toastPeriodRemoved: 'Regla eliminada d’avui', toastNeedPeriod: 'Registra la regla primer', toastCalendarExported: 'Calendari exportat', toastDataExported: 'Dades exportades', toastPremiumActive: 'Premium ja està actiu', toastPremiumDemo: 'Premium demo activat', toastGroqFormat: 'La clau de Groq sol començar per gsk_', toastDeleteConfirm: 'Vols esborrar totes les dades de LunaSync en aquest dispositiu? Aquesta acció no es pot desfer.',
+    toastName: 'Escriu el teu nom per continuar', toastCycle: 'El cicle ha d’estar entre 21 i 45 dies', toastPeriod: 'La regla ha d’estar entre 2 i 10 dies', toastLastPeriod: 'Selecciona l’inici de la teva última regla', toastWelcome: 'Benvinguda a LunaSync', toastSaved: '✅ Perfil desat', toastLogSaved: '✅ Registre desat', toastPeriodAdded: '🩸 Regla registrada', toastPeriodRemoved: 'Regla eliminada d’avui', toastNeedPeriod: 'Registra la regla primer', toastCalendarExported: 'Calendari exportat', toastDataExported: 'Dades exportades', toastPremiumActive: 'Premium ja està actiu', toastPremiumDemo: 'Premium demo activat', toastGroqFormat: 'La clau de Groq sol començar per gsk_', toastDeleteConfirm: 'Vols esborrar totes les dades de LunaSync en aquest dispositiu? Aquesta acció no es pot desfer.', toastBusinessSaved: 'Connexió desada', toastLoginSent: 'Revisa el teu email per entrar', toastLoginNeeded: 'Inicia sessió per activar Premium automàtic', toastSupabaseNeeded: 'Configura Supabase al Perfil', toastStripeNeeded: 'Afegeix aquest enllaç de Stripe al Perfil',
     languageGateCopy: 'Tria el teu idioma per començar.', languageEsCopy: 'Ciclo, bienestar y Luna AI en español.', languageCaCopy: 'Cicle, benestar i Luna AI en català.', languageEnCopy: 'Cycle, wellbeing and Luna AI in English.',
     cycleDayLabel: 'Dia del cicle', noData: 'Sense dades', noPeriodDesc: 'Registra la regla per començar el seguiment', periodToday: 'Regla activa avui (toca per treure-la)', periodStart: 'Registrar inici de regla', recoTitle: '✨ Recomanacions d’avui', logTitle: '📝 Registre d’avui', moodLabel: 'Com et trobes?', flowLabel: 'Flux', symptomsLabel: 'Símptomes', saveLogBtn: 'Desar registre',
     flowLightLabel: 'Lleuger', flowNormalLabel: 'Normal', flowHeavyLabel: 'Abundant', flowVeryHeavyLabel: 'Molt abundant',
@@ -1570,6 +1631,7 @@ const I18N = {
     premiumFeature1Title: 'Patrons avançats', premiumFeature1Copy: 'Gràfics de símptomes, estat d’ànim i flux per fase i per cicle.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Anàlisi mensual i respostes amb més context de l’historial.', premiumFeature3Title: 'Recordatoris intel·ligents', premiumFeature3Copy: 'Avisos de regla, finestra fèrtil, autocura i registre diari.',
     premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium està pensat per a usuàries que ja registren el cicle i volen entendre patrons reals, no només apuntar dates.', premiumModalFeature1Title: 'Els meus patrons', premiumModalFeature1Copy: 'Gràfics de símptomes, estat d’ànim, flux i fases en els últims cicles.', premiumModalFeature2Title: 'Anàlisi mensual amb Luna', premiumModalFeature2Copy: 'Un resum útil del teu mes amb senyals recurrents i recomanacions.', premiumModalFeature3Title: 'Recordatoris intel·ligents', premiumModalFeature3Copy: 'Notificacions de regla, autocura, fase fèrtil i registre diari.', premiumModalDemoBtn: 'Provar Premium demo', premiumModalFreeBtn: 'Continuar gratis',
     premiumScreenTitle: '💎 LunaSync Premium', premiumLockedTitle: 'Entén els teus patrons de veritat', premiumLockedCopy: 'El registre diari i el calendari continuen gratis. Premium desbloqueja anàlisis avançades, resums del cicle i eines de seguiment més profundes.', premiumActiveTitle: 'Premium actiu', premiumActiveCopy: 'Les teves eines avançades estan disponibles en aquest dispositiu.', premiumTrialBtn: 'Provar 30 dies gratis', premiumMonthlyBtn: 'Mensual 4,99€', premiumYearlyBtn: 'Anual 39,99€', premiumPlusBtn: 'Premium+ 7,99€', premiumMonthlyCopy: 'Patrons, anàlisi mensual i recordatoris intel·ligents.', premiumYearlyCopy: 'L’opció més rendible per a usuàries constants.', premiumPlusCopy: 'Inclou Luna Pro amb anàlisi més profunda de l’historial.', premiumFreePlanTitle: 'Gratis', premiumFreePlanCopy: 'Registre diari, calendari, prediccions bàsiques, exportació i privacitat local.', premiumStatsTitle: 'Resum premium', premiumSymptomsTitle: 'Símptomes més repetits', premiumMoodTitle: 'Estat d’ànim registrat', premiumFlowTitle: 'Flux registrat', premiumInsightTitle: 'Anàlisi mensual local', premiumInsightBtn: 'Generar anàlisi del mes', premiumNoData: 'Encara no hi ha prou registres. Desa alguns dies de símptomes, estat d’ànim o flux per veure patrons.', premiumLogsCount: 'Registres', premiumPeriodDaysCount: 'Dies de regla', premiumCurrentPhase: 'Fase actual', premiumNoMood: 'Sense estat d’ànim registrat', premiumNoFlow: 'Sense flux registrat', premiumInsightEmpty: 'Prem el botó per generar un resum privat amb les dades guardades en aquest dispositiu.', premiumInsightText: 'Aquest mes has registrat {logs} dies. El més repetit ha estat {symptom}. L’estat d’ànim més freqüent ha estat {mood} i el flux més comú {flow}. Recomanació: observa si aquests patrons es repeteixen el proper cicle abans de treure conclusions.',
+    businessTitle: '🧩 U10 Agency', businessCopy: 'Connecta Supabase i Stripe per a login, Premium real i panell admin.', supabaseUrlLabel: 'Supabase Project URL', supabaseAnonLabel: 'Supabase anon public key', supabaseAnonHint: 'És una clau pública. No hi enganxis la service role key.', stripeMonthlyLabel: 'Stripe mensual', stripeYearlyLabel: 'Stripe anual', stripePlusLabel: 'Stripe Premium+', saveBusinessBtn: 'Desar connexió', accountTitle: 'Compte LunaSync', accountCopy: 'Entra amb el teu email per sincronitzar el pla Premium entre dispositius.', accountEmailPlaceholder: 'el-teu@email.com', sendLoginBtn: 'Enviar enllaç d’accés', logoutBtn: 'Tancar sessió', adminTitle: 'Panell admin', adminUsers: 'Usuàries', adminPremium: 'Premium', adminTrial: 'Demo', adminEvents: 'Obertures', adminRefreshBtn: 'Actualitzar panell', adminNoAccess: 'El teu compte no té rol admin.', paymentOpening: 'Obrint Stripe...',
     months: ['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'], weekdaysShort: ['Dl','Dt','Dc','Dj','Dv','Ds','Dg'],
     symptoms: ['Cap','Inflor','Rampes','Cansament','Nàusees','Retenció d’aigua','Acne','Energia alta','Desitjos','Ansietat','Sensibilitat','Libido alta','Baixada d’ànim','Pell radiant'],
     aiLanguage: 'català',
@@ -1589,7 +1651,7 @@ const I18N = {
     profileSaveBtn: 'Save profile', privacyTitle: '🔒 Privacy', privacyCopy: 'Your logs are stored <strong>only on this device</strong>. LunaSync does not share or sell your information. If you enable Luna AI, only then is the cycle context needed for chat sent to Groq.', exportDataBtn: 'Export my data', resetDataBtn: 'Delete all my data',
     installTitle: '📱 Install LunaSync', installCopy: 'On iPhone: share this page and tap <strong>Add to Home Screen</strong>. On Android: open the browser menu and tap <strong>Install app</strong>.', installHint: 'The app will keep storing data on this device.',
     medicalTitle: '⚠️ Medical notice', medicalCopy: 'LunaSync is a personal tracking tool and does not replace professional medical advice. Always consult your doctor or gynecologist for health concerns.',
-    toastName: 'Enter your name to continue', toastCycle: 'Cycle length must be between 21 and 45 days', toastPeriod: 'Period length must be between 2 and 10 days', toastLastPeriod: 'Select the start of your last period', toastWelcome: 'Welcome to LunaSync', toastSaved: '✅ Profile saved', toastLogSaved: '✅ Log saved', toastPeriodAdded: '🩸 Period logged', toastPeriodRemoved: 'Period removed from today', toastNeedPeriod: 'Log your period first', toastCalendarExported: 'Calendar exported', toastDataExported: 'Data exported', toastPremiumActive: 'Premium is already active', toastPremiumDemo: 'Premium demo activated', toastGroqFormat: 'Groq keys usually start with gsk_', toastDeleteConfirm: 'Delete all LunaSync data on this device? This cannot be undone.',
+    toastName: 'Enter your name to continue', toastCycle: 'Cycle length must be between 21 and 45 days', toastPeriod: 'Period length must be between 2 and 10 days', toastLastPeriod: 'Select the start of your last period', toastWelcome: 'Welcome to LunaSync', toastSaved: '✅ Profile saved', toastLogSaved: '✅ Log saved', toastPeriodAdded: '🩸 Period logged', toastPeriodRemoved: 'Period removed from today', toastNeedPeriod: 'Log your period first', toastCalendarExported: 'Calendar exported', toastDataExported: 'Data exported', toastPremiumActive: 'Premium is already active', toastPremiumDemo: 'Premium demo activated', toastGroqFormat: 'Groq keys usually start with gsk_', toastDeleteConfirm: 'Delete all LunaSync data on this device? This cannot be undone.', toastBusinessSaved: 'Connection saved', toastLoginSent: 'Check your email to sign in', toastLoginNeeded: 'Sign in to activate Premium automatically', toastSupabaseNeeded: 'Configure Supabase in Profile', toastStripeNeeded: 'Add this Stripe link in Profile',
     languageGateCopy: 'Choose your language to start.', languageEsCopy: 'Ciclo, bienestar y Luna AI en español.', languageCaCopy: 'Cicle, benestar i Luna AI en català.', languageEnCopy: 'Cycle, wellbeing and Luna AI in English.',
     cycleDayLabel: 'Cycle day', noData: 'No data', noPeriodDesc: 'Log your period to start tracking', periodToday: 'Period active today (tap to remove)', periodStart: 'Log period start', recoTitle: '✨ Today’s recommendations', logTitle: '📝 Today’s log', moodLabel: 'How do you feel?', flowLabel: 'Flow', symptomsLabel: 'Symptoms', saveLogBtn: 'Save log',
     flowLightLabel: 'Light', flowNormalLabel: 'Normal', flowHeavyLabel: 'Heavy', flowVeryHeavyLabel: 'Very heavy',
@@ -1602,6 +1664,7 @@ const I18N = {
     premiumFeature1Title: 'Advanced patterns', premiumFeature1Copy: 'Charts for symptoms, mood and flow by phase and cycle.', premiumFeature2Title: 'Luna Pro', premiumFeature2Copy: 'Monthly analysis and answers with more history context.', premiumFeature3Title: 'Smart reminders', premiumFeature3Copy: 'Period, fertile window, self-care and daily log reminders.',
     premiumModalTitle: '💎 LunaSync Premium', premiumModalCopy: 'Premium is for users who already track their cycle and want to understand real patterns, not just write down dates.', premiumModalFeature1Title: 'My patterns', premiumModalFeature1Copy: 'Charts for symptoms, mood, flow and phases across recent cycles.', premiumModalFeature2Title: 'Monthly analysis with Luna', premiumModalFeature2Copy: 'A useful monthly summary with recurring signals and recommendations.', premiumModalFeature3Title: 'Smart reminders', premiumModalFeature3Copy: 'Period, self-care, fertile phase and daily log notifications.', premiumModalDemoBtn: 'Try Premium demo', premiumModalFreeBtn: 'Keep using free',
     premiumScreenTitle: '💎 LunaSync Premium', premiumLockedTitle: 'Understand your real patterns', premiumLockedCopy: 'Daily logging and the calendar stay free. Premium unlocks advanced analysis, cycle summaries and deeper tracking tools.', premiumActiveTitle: 'Premium active', premiumActiveCopy: 'Your advanced tools are available on this device.', premiumTrialBtn: 'Try 30 days free', premiumMonthlyBtn: 'Monthly €4.99', premiumYearlyBtn: 'Yearly €39.99', premiumPlusBtn: 'Premium+ €7.99', premiumMonthlyCopy: 'Patterns, monthly analysis and smart reminders.', premiumYearlyCopy: 'Best value for consistent users.', premiumPlusCopy: 'Includes Luna Pro with deeper history analysis.', premiumFreePlanTitle: 'Free', premiumFreePlanCopy: 'Daily log, calendar, basic predictions, export and local privacy.', premiumStatsTitle: 'Premium summary', premiumSymptomsTitle: 'Most repeated symptoms', premiumMoodTitle: 'Logged mood', premiumFlowTitle: 'Logged flow', premiumInsightTitle: 'Local monthly analysis', premiumInsightBtn: 'Generate monthly analysis', premiumNoData: 'Not enough logs yet. Save a few days of symptoms, mood or flow to see patterns.', premiumLogsCount: 'Logs', premiumPeriodDaysCount: 'Period days', premiumCurrentPhase: 'Current phase', premiumNoMood: 'No mood logged', premiumNoFlow: 'No flow logged', premiumInsightEmpty: 'Tap the button to generate a private summary from data stored on this device.', premiumInsightText: 'This month you logged {logs} days. The most repeated item was {symptom}. Your most frequent mood was {mood} and the most common flow was {flow}. Recommendation: watch whether these patterns repeat next cycle before drawing conclusions.',
+    businessTitle: '🧩 U10 Agency', businessCopy: 'Connect Supabase and Stripe for login, real Premium and an admin panel.', supabaseUrlLabel: 'Supabase Project URL', supabaseAnonLabel: 'Supabase anon public key', supabaseAnonHint: 'This is a public key. Do not paste the service role key here.', stripeMonthlyLabel: 'Stripe monthly', stripeYearlyLabel: 'Stripe yearly', stripePlusLabel: 'Stripe Premium+', saveBusinessBtn: 'Save connection', accountTitle: 'LunaSync account', accountCopy: 'Sign in with email to sync your Premium plan across devices.', accountEmailPlaceholder: 'you@email.com', sendLoginBtn: 'Send sign-in link', logoutBtn: 'Sign out', adminTitle: 'Admin panel', adminUsers: 'Users', adminPremium: 'Premium', adminTrial: 'Trial', adminEvents: 'Opens', adminRefreshBtn: 'Refresh panel', adminNoAccess: 'Your account does not have the admin role.', paymentOpening: 'Opening Stripe...',
     months: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdaysShort: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
     symptoms: ['Headache','Bloating','Cramps','Tiredness','Nausea','Water retention','Acne','High energy','Cravings','Anxiety','Tenderness','High libido','Low mood','Glowing skin'],
     aiLanguage: 'English',
@@ -1833,6 +1896,23 @@ function saveState() {
   localStorage.setItem('lunasync', JSON.stringify(state));
 }
 
+function getBusinessConfig() {
+  return {
+    supabaseUrl: (state.business.supabaseUrl || APP_CONFIG.supabaseUrl || '').replace(/\/$/, ''),
+    supabaseAnonKey: state.business.supabaseAnonKey || APP_CONFIG.supabaseAnonKey || '',
+    stripeLinks: {
+      monthly: state.business.stripeLinks?.monthly || APP_CONFIG.stripeLinks.monthly || '',
+      yearly: state.business.stripeLinks?.yearly || APP_CONFIG.stripeLinks.yearly || '',
+      plus: state.business.stripeLinks?.plus || APP_CONFIG.stripeLinks.plus || ''
+    }
+  };
+}
+
+function businessReady() {
+  const cfg = getBusinessConfig();
+  return !!(cfg.supabaseUrl && cfg.supabaseAnonKey);
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -1882,7 +1962,9 @@ function applyLanguage() {
     'premiumFeature3Copy','premiumModalTitle','premiumModalPriceSuffix',
     'premiumModalFeature1Title','premiumModalFeature1Copy','premiumModalFeature2Title',
     'premiumModalFeature2Copy','premiumModalFeature3Title','premiumModalFeature3Copy',
-    'premiumModalDemoBtn','premiumModalFreeBtn'
+    'premiumModalDemoBtn','premiumModalFreeBtn','businessTitle','businessCopy',
+    'supabaseUrlLabel','supabaseAnonLabel','supabaseAnonHint','stripeMonthlyLabel',
+    'stripeYearlyLabel','stripePlusLabel','saveBusinessBtn'
   ].forEach(id => setText(id, t(id)));
 
   setText('privacyCopy', t('privacyCopy'), true);
@@ -1939,6 +2021,170 @@ function changeLanguageFromProfile() {
   saveState();
   applyLanguage();
   showToast(t('toastLanguageChanged'));
+}
+
+// ============ SUPABASE / BUSINESS ============
+function parseJwt(token) {
+  try {
+    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(decodeURIComponent(atob(payload).split('').map(c =>
+      `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`
+    ).join('')));
+  } catch {
+    return null;
+  }
+}
+
+function getSession() {
+  return state.business.session || null;
+}
+
+function getCurrentUser() {
+  const session = getSession();
+  if (!session?.access_token) return null;
+  const jwt = parseJwt(session.access_token);
+  if (!jwt?.sub) return null;
+  return { id: jwt.sub, email: jwt.email || state.business.email || '' };
+}
+
+async function supabaseRequest(path, options = {}) {
+  const cfg = getBusinessConfig();
+  if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) throw new Error('Supabase is not configured');
+  const session = getSession();
+  const headers = {
+    apikey: cfg.supabaseAnonKey,
+    Authorization: `Bearer ${session?.access_token || cfg.supabaseAnonKey}`,
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+  const res = await fetch(`${cfg.supabaseUrl}${path}`, { ...options, headers });
+  if (!res.ok) throw new Error(await res.text());
+  if (res.status === 204) return null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function initRemoteAuth() {
+  if (!businessReady()) return;
+  const params = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  if (accessToken) {
+    state.business.session = { access_token: accessToken, refresh_token: refreshToken || '' };
+    const user = getCurrentUser();
+    if (user?.email) state.business.email = user.email;
+    history.replaceState(null, document.title, location.pathname + location.search);
+    saveState();
+  }
+  await syncRemoteProfile();
+  await recordAppEvent('app_open');
+}
+
+async function sendLoginLink() {
+  const cfg = getBusinessConfig();
+  if (!businessReady()) {
+    showToast(t('toastSupabaseNeeded'));
+    return;
+  }
+  const email = document.getElementById('accountEmail')?.value.trim() || state.business.email || '';
+  if (!email || !email.includes('@')) return;
+  await fetch(`${cfg.supabaseUrl}/auth/v1/otp`, {
+    method: 'POST',
+    headers: {
+      apikey: cfg.supabaseAnonKey,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email,
+      create_user: true,
+      options: { email_redirect_to: location.href.split('#')[0] }
+    })
+  });
+  state.business.email = email;
+  saveState();
+  showToast(t('toastLoginSent'));
+}
+
+async function logoutBusiness() {
+  state.business.session = null;
+  state.business.remoteProfile = null;
+  state.plan = 'free';
+  saveState();
+  renderPremiumScreen();
+  updatePlanStatus();
+}
+
+async function syncRemoteProfile() {
+  const user = getCurrentUser();
+  if (!user) return;
+  const profile = await supabaseRequest(`/rest/v1/profiles?select=*&id=eq.${user.id}`).then(rows => rows?.[0]).catch(() => null);
+  if (!profile) return;
+  state.business.remoteProfile = profile;
+  state.business.email = profile.email || user.email;
+  state.plan = profile.plan || 'free';
+  state.trialEndsAt = profile.trial_ends_at || state.trialEndsAt || '';
+  saveState();
+  updatePlanStatus();
+}
+
+async function recordAppEvent(eventName) {
+  if (!businessReady()) return;
+  const user = getCurrentUser();
+  await supabaseRequest('/rest/v1/app_events', {
+    method: 'POST',
+    headers: { Prefer: 'return=minimal' },
+    body: JSON.stringify({
+      event_name: eventName,
+      device_id: state.deviceId,
+      user_id: user?.id || null
+    })
+  }).catch(() => null);
+}
+
+function openStripeCheckout(planId) {
+  const cfg = getBusinessConfig();
+  const link = cfg.stripeLinks[planId];
+  if (!link) {
+    showToast(t('toastStripeNeeded'));
+    return;
+  }
+  const user = getCurrentUser();
+  if (!user) {
+    showToast(t('toastLoginNeeded'));
+    return;
+  }
+  const url = new URL(link);
+  url.searchParams.set('prefilled_email', user.email || state.business.email || '');
+  state.selectedPremiumPlan = planId;
+  saveState();
+  showToast(t('paymentOpening'));
+  location.href = url.toString();
+}
+
+async function loadAdminStats() {
+  const profile = state.business.remoteProfile;
+  const box = document.getElementById('adminPanelContent');
+  if (!box) return;
+  if (profile?.role !== 'admin') {
+    box.innerHTML = `<div class="field-hint">${t('adminNoAccess')}</div>`;
+    return;
+  }
+  const profiles = await supabaseRequest('/rest/v1/profiles?select=id,email,plan,role,created_at,premium_until&order=created_at.desc&limit=50').catch(() => []);
+  const events = await supabaseRequest('/rest/v1/app_events?select=id,event_name,created_at&order=created_at.desc&limit=200').catch(() => []);
+  const premiumCount = profiles.filter(p => p.plan && p.plan !== 'free').length;
+  const trialCount = profiles.filter(p => p.plan === 'trial').length;
+  box.innerHTML = `
+    <div class="premium-kpi-grid">
+      <div class="stat-box"><div class="stat-value">${profiles.length}</div><div class="stat-label">${t('adminUsers')}</div></div>
+      <div class="stat-box"><div class="stat-value">${premiumCount}</div><div class="stat-label">${t('adminPremium')}</div></div>
+      <div class="stat-box"><div class="stat-value">${trialCount}</div><div class="stat-label">${t('adminTrial')}</div></div>
+      <div class="stat-box"><div class="stat-value">${events.length}</div><div class="stat-label">${t('adminEvents')}</div></div>
+    </div>
+    <table class="admin-table">
+      <thead><tr><th>Email</th><th>Plan</th><th>Role</th></tr></thead>
+      <tbody>${profiles.map(p => `<tr><td>${p.email || '-'}</td><td>${p.plan || 'free'}</td><td>${p.role || 'user'}</td></tr>`).join('')}</tbody>
+    </table>
+  `;
 }
 
 // ============ CYCLE LOGIC ============
@@ -2288,6 +2534,12 @@ function loadProfile() {
   document.getElementById('profileGoal').value = state.goal || 'salud';
   document.getElementById('profileGroqKey').value = state.groqKey || '';
   document.getElementById('profileAiConsent').checked = !!state.aiConsent;
+  const cfg = getBusinessConfig();
+  document.getElementById('profileSupabaseUrl').value = cfg.supabaseUrl || '';
+  document.getElementById('profileSupabaseAnonKey').value = cfg.supabaseAnonKey || '';
+  document.getElementById('profileStripeMonthly').value = cfg.stripeLinks.monthly || '';
+  document.getElementById('profileStripeYearly').value = cfg.stripeLinks.yearly || '';
+  document.getElementById('profileStripePlus').value = cfg.stripeLinks.plus || '';
   updateGroqStatus();
   updatePlanStatus();
 }
@@ -2330,6 +2582,19 @@ function saveProfile() {
   showToast(t('toastSaved'));
 }
 
+function saveBusinessConfig() {
+  state.business.supabaseUrl = document.getElementById('profileSupabaseUrl').value.trim().replace(/\/$/, '');
+  state.business.supabaseAnonKey = document.getElementById('profileSupabaseAnonKey').value.trim();
+  state.business.stripeLinks = {
+    monthly: document.getElementById('profileStripeMonthly').value.trim(),
+    yearly: document.getElementById('profileStripeYearly').value.trim(),
+    plus: document.getElementById('profileStripePlus').value.trim()
+  };
+  saveState();
+  showToast(t('toastBusinessSaved'));
+  initRemoteAuth();
+}
+
 function updateGroqStatus() {
   const status = document.getElementById('groqKeyStatus');
   if (!status) return;
@@ -2346,7 +2611,7 @@ function updatePlanStatus() {
   if (!badge) return;
   const status = document.getElementById('premiumStatus');
   refreshTrialStatus();
-  const premium = state.plan === 'premium';
+  const premium = state.plan && state.plan !== 'free' && state.plan !== 'trial';
   const trial = state.plan === 'trial';
   badge.textContent = premium ? t('premiumWord') : trial ? t('trialWord') : t('freeWord');
   badge.classList.toggle('ready', premium || trial);
@@ -2363,7 +2628,7 @@ function updatePlanStatus() {
 
 function isPremium() {
   refreshTrialStatus();
-  return state.plan === 'premium' || state.plan === 'trial';
+  return !!(state.plan && state.plan !== 'free') || state.business.remoteProfile?.role === 'admin';
 }
 
 function openPremium(source = 'feature') {
@@ -2394,7 +2659,7 @@ function activatePremiumDemo() {
 function selectPremiumPlan(planId) {
   state.selectedPremiumPlan = planId;
   saveState();
-  openPremium(planId);
+  openStripeCheckout(planId);
 }
 
 function countValues(values) {
@@ -2478,10 +2743,37 @@ function renderPremiumScreen() {
   const el = document.getElementById('premiumScreenContent');
   if (!el) return;
   el.innerHTML = isPremium() ? renderPremiumDashboard() : renderPremiumPaywall();
+  if (isPremium()) loadAdminStats();
+}
+
+function renderAccountBox() {
+  if (!businessReady()) {
+    return `<div class="card"><div class="card-title">${t('accountTitle')}</div><div class="field-hint">${t('toastSupabaseNeeded')}</div></div>`;
+  }
+  const user = getCurrentUser();
+  if (user) {
+    return `
+      <div class="card">
+        <div class="card-title">${t('accountTitle')}</div>
+        <div class="status-pill ready">${user.email}</div>
+        <button class="secondary-btn" onclick="syncRemoteProfile().then(renderPremiumScreen)">${t('adminRefreshBtn')}</button>
+        <button class="danger-btn" onclick="logoutBusiness()">${t('logoutBtn')}</button>
+      </div>
+    `;
+  }
+  return `
+    <div class="card">
+      <div class="card-title">${t('accountTitle')}</div>
+      <div class="field-hint">${t('accountCopy')}</div>
+      <input class="profile-input" id="accountEmail" type="email" placeholder="${t('accountEmailPlaceholder')}" value="${state.business.email || ''}" style="margin-top:12px">
+      <button class="save-btn" onclick="sendLoginLink()">${t('sendLoginBtn')}</button>
+    </div>
+  `;
 }
 
 function renderPremiumPaywall() {
   return `
+    ${renderAccountBox()}
     <div class="card premium-card">
       <div class="card-title">${t('premiumScreenTitle')}</div>
       <div class="premium-price">4,99€ <span>${t('premiumPriceSuffix')}</span></div>
@@ -2533,6 +2825,7 @@ function renderPremiumDashboard() {
   const insight = state.premiumMonthlyInsight || t('premiumInsightEmpty');
 
   return `
+    ${renderAccountBox()}
     <div class="card premium-card">
       <div class="card-title" style="justify-content:space-between">
         <span>${t('premiumActiveTitle')}</span>
@@ -2582,6 +2875,14 @@ function renderPremiumDashboard() {
       <div class="card-title">${t('premiumInsightTitle')}</div>
       <div id="premiumInsight" class="premium-feature-copy" style="line-height:1.6">${insight}</div>
       <button class="save-btn" onclick="generateMonthlyInsight()">${t('premiumInsightBtn')}</button>
+    </div>
+
+    <div class="card" style="margin-bottom:30px">
+      <div class="card-title" style="justify-content:space-between">
+        <span>${t('adminTitle')}</span>
+        <button onclick="loadAdminStats()" style="border:none;background:none;color:var(--rose);font-weight:700;cursor:pointer">${t('adminRefreshBtn')}</button>
+      </div>
+      <div id="adminPanelContent"><div class="field-hint">${t('adminNoAccess')}</div></div>
     </div>
   `;
 }
@@ -2946,6 +3247,11 @@ function showScreen(name, navBtn) {
 applyLanguage();
 renderHome();
 updatePlanStatus();
+initRemoteAuth().then(() => {
+  renderHome();
+  updatePlanStatus();
+  if (document.getElementById('screen-premium')?.classList.contains('active')) renderPremiumScreen();
+}).catch(() => null);
 if (!initLanguageGate()) initOnboarding();
 </script>
 </body>
